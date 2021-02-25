@@ -5,5 +5,6 @@ public:
 	node(int num);
 	int number;
 	node *next = nullptr;
+	node *prev = nullptr;
 };
 
