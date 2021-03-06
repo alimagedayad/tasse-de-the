@@ -1,39 +1,63 @@
 #include <iostream>
 #include "LinkedList.h"
 #include "Node.h"
+#include <string>
+#include <iomanip>
+
 
 using namespace std;
 int main() {
 	int command = NULL;
 	LinkedList todo_list;
-
-
-	std::cout << "we are now entering the terminal verion of the todo list: " << std::endl;
 	
+
 	while (command != -1) {
-		cout << "command palette: " << endl;
-		cout << "1-> add node \n2->delete node with index \n3->print list forward\n4->print list backward" << endl;
+		system("CLS");
+		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTextAttribute(hConsole, 13);
+		cout << setw(50) << "Welcome to the TODO List application" << endl;
+		cout << "We are now entering the terminal verion of the todo list: " << endl;
+		SetConsoleTextAttribute(hConsole, 15);
+		cout << "Please choose an intruction from the following list: " << endl;
+		cout << "1-> Add a new task \n2->Delete an existing task with index \n3->Print list forward\n4->Print list backward\n5->Swap tasks\n-1->Terminate program" << endl;
+		cout << "Enter command: ";
 		cin >> command;
 		if (command == 1) {
 			int val;
-			cout << "enter the value to add it to the list: " << endl;
+			string task, ctg;
+			cout << "Enter task description: ";
+			cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+			getline(cin, task);
+			cout << "Enter task priority: ";
 			cin >> val;
-			todo_list.add_node(val);
+			cout << "Enter task category: ";
+			cin >> ctg;
+			todo_list.add_node(val, task, ctg);
 		}
 		else if (command == 2) {
 			int del_indx;
-			cout << "enter the index you want to delete: " << endl;
+			cout << "Enter the task index you want to delete: " << endl;
 			cout << "'''INDECES ARE IN 0 BASE'''" << endl;
 			cin >> del_indx;
 			todo_list.delete_index(del_indx);
 		}
-		else if (command == 3) {todo_list.print_forward();	}
-		else if (command == 4) { todo_list.print_backward(); }
+		else if (command == 3) { todo_list.print_forward(); system("PAUSE");}
+		else if (command == 4) { todo_list.print_backward(); system("PAUSE");}
+		else if (command == 5)
+		{
+			int i = 0; 
+			int j = 0;
+			cout << "Enter the indeces you want to swap: "<<endl;
+			cout << "'''INDECES ARE IN 0 BASE'''" << endl;
+			cin >> i >> j;
+			todo_list.swap_index(i, j);
+			
+		}
 	}
 	cout << "nice to meet you sir, hope we cured your procrastination :)" << endl;
 	std::cin.get();
-	
 
-	
-	
+
+
+
 }

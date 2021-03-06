@@ -1,10 +1,13 @@
 #pragma once
+#include <iostream>
 class node
 {
 public:
-	node(int num);
+	node(int num, std::string task, std::string category);
 	int number;
-	node *next = nullptr;
-	node *prev = nullptr;
+	std::string task;
+	std::string category;
+	node* next = nullptr;
+	node* prev = nullptr;
 };
 

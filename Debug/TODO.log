@@ -1,3 +1,0 @@
-﻿  LinkedList.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
-  LinkedList.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
-LINK : fatal error LNK1104: cannot open file 'MSCOREE.lib'
