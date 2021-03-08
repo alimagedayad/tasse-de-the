@@ -1,15 +1,15 @@
 #include "LinkedList.h"
 #include <iomanip>
-
+#include "Node.h"
 using namespace std;
 LinkedList::LinkedList() {
 	head = nullptr;
 	tail = nullptr;
 }
 
-void LinkedList::add_node(int num, std::string tsk, std::string ctg) {
+void LinkedList::add_node(int num, std::string tsk, std::string ctg, int ID) {
 	if (head == nullptr) {
-		head = new node(num,tsk,ctg);
+		head = new node(num,tsk,ctg, ID);
 		head->prev = head->next = nullptr;
 		tail = head;
 	}
@@ -19,29 +19,14 @@ void LinkedList::add_node(int num, std::string tsk, std::string ctg) {
 		while (temp->next) {
 			temp = temp->next;
 		}
-		temp->next = new node(num,tsk,ctg);
+		temp->next = new node(num,tsk,ctg, ID);
 		temp->next->prev = temp;
 		tail = temp->next;
 	}
 }
-
-void LinkedList::print_forward() {
-	if (!head) {
-		std::cout << "The list is empty" << std::endl;
-		return;
-	}
-	node* temp = head;
-	int counter = 0;
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hConsole, 11);
-	std::cout << std::setw(10)<<"Task ID: "<< std::setw(25) << "Task Priority: " << std::setw(25) << "Task Category: " << std::setw(35) << "Task Description: "<<std::endl;
-	std::cout << std::string(95, '-') << std::endl;
-	SetConsoleTextAttribute(hConsole, 15);
-	while (temp->next) {
-		std::cout << std::setw(10) << (counter++) + 1 << std::setw(25) << temp->number << std::setw(25) << temp->category << std::setw(35) << temp->task << std::endl;
-		temp = temp->next;
-	}
-	std::cout << std::setw(10) << (counter++) + 1 << std::setw(25) << temp->number << std::setw(25) << temp->category << std::setw(35) << temp->task << std::endl;
+node LinkedList::print_forward(int index) {
+	node* temp = find_index(index);
+	return *temp;
 }
 
 void LinkedList::print_backward() {
@@ -61,9 +46,20 @@ void LinkedList::print_backward() {
 		temp = temp->prev;
 	}
 }
-
+std::ostream& operator<<(std::ostream& out, LinkedList object) {
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hConsole, 11);
+	std::cout << std::string(144, '-') << std::endl;
+	std::cout << "|" << std::setfill(' ')<<std::setw(10) <<"|"<< "Task ID" << "|" << std::setfill(' ')<<std::setw(20) << "|" << "Task Priority" << "|" << std::setfill(' ') << std::setw(20) << "|" << "Task Category" << "|" << std::setfill(' ') << std::setw(30) << "|" << "Task Description" << "|" <<setw(10)<<"|"<< std::endl;
+	std::cout << std::string(144, '-') << std::endl;
+	SetConsoleTextAttribute(hConsole, 15);
+	int n = object.n_nodes();
+	for (int i = 0; i < n; i++)
+		cout << object.print_forward(i);
+	return out;
+}
 void LinkedList::push_node(int num, std::string tsk) {
-	node* temp = new node(num,tsk,"");
+	node* temp = new node(num,tsk,"",0);
 	if (!head) {
 		head = tail = temp;
 		return;
@@ -76,7 +72,7 @@ void LinkedList::push_node(int num, std::string tsk) {
 bool LinkedList::insert_node(int num, const int& index) {
 	int counter = 0;
 	node* temp = head;
-	node* add_this = new node(num,"","");
+	node* add_this = new node(num,"","",0);
 	while (temp != nullptr && counter < index - 1) {
 		temp = temp->next;
 		counter++;

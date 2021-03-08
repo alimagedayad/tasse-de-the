@@ -3,13 +3,20 @@
 #include "Node.h"
 #include <string>
 #include <iomanip>
-
-
+int tskID = 0;
 using namespace std;
+
+void display_list(LinkedList todo)
+{
+	int n = todo.n_nodes();
+	for (int i = 0; i < n; i++)
+		cout << todo.print_forward(i);
+}
+
 int main() {
 	int command = NULL;
 	LinkedList todo_list;
-	
+
 
 	while (command != -1) {
 		system("CLS");
@@ -32,7 +39,8 @@ int main() {
 			cin >> val;
 			cout << "Enter task category: ";
 			cin >> ctg;
-			todo_list.add_node(val, task, ctg);
+			todo_list.add_node(val, task, ctg,tskID);
+			tskID++;
 		}
 		else if (command == 2) {
 			int del_indx;
@@ -41,7 +49,11 @@ int main() {
 			cin >> del_indx;
 			todo_list.delete_index(del_indx);
 		}
-		else if (command == 3) { todo_list.print_forward(); system("PAUSE");}
+		else if (command == 3) { 
+			cout << todo_list;
+			system("PAUSE");
+
+		}
 		else if (command == 4) { todo_list.print_backward(); system("PAUSE");}
 		else if (command == 5)
 		{

@@ -1,7 +1,7 @@
+#pragma once
 #include "Node.h"
 #include <iostream>
 #include <Windows.h>
-#pragma once
 class LinkedList
 {
 public:
@@ -9,12 +9,12 @@ public:
 	LinkedList();
 	//members
 		// public
-	void add_node(int, std::string, std::string);
+	void add_node(int, std::string, std::string, int ID);
 
 	void push_node(int, std::string);
 
-	void print_forward();
-
+	node print_forward(int);
+		
 	void print_backward();
 
 	bool insert_node(int, const int&);
@@ -29,7 +29,7 @@ public:
 
 	void swap_index(int i, int j);
 	node* find_index(int i);
-
+	friend std::ostream& operator<<(std::ostream& out, LinkedList);
 	int n_nodes();
 	// private
 private:
