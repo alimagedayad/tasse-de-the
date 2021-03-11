@@ -1,5 +1,6 @@
 #include "LinkedList.h"
 #include <iomanip>
+#include "fort.hpp"
 
 
 using namespace std;
@@ -34,18 +35,40 @@ void LinkedList::add_node(int num, int ID , std::string tsk, std::string ctg, in
 			temp = temp->next;
 		}
 		temp->next = new node(num,tsk,ctg, ID);
-		temp->set_timer(year, month, day, hour, minute);
+		temp->next->set_timer(year, month, day, hour, minute);
 		temp->next->prev = temp;
 		tail = temp->next;
 	}
 }
 
-node LinkedList::print_forward(int index) {
+string LinkedList::display_list(int index) {
+	if (!head) {
+		return "The list is empty";
+	}
 	node* temp = find_index(index);
-	return *temp;
+	fort::char_table table;
+	table << fort::header;
+	table[0][0] = "ID";
+	table[0][1] = "Priority";
+	table[0][2] = "Category";
+	table[0][3] = "Description";
+	table[0][4] = "Date(d/m/y)";
+	table[0][5] = "Time(h:m)";
+	table << fort::endr;
+	string day, month, year, hour, minute;
+	day = to_string(temp->timer.tm_mday);
+	month = to_string((temp->timer.tm_mon)+1);
+	year = to_string((temp->timer.tm_year)+1900);
+	hour = to_string(temp->timer.tm_hour);
+	minute = to_string(temp->timer.tm_min);
+	while (temp != nullptr) {
+		table << temp->ID << temp->number << temp->category << temp->task << day + "/" + month + '/' + year << hour + ':' + minute << fort::endr;
+	temp = temp->next;
+	}
+	return table.to_string();
 }
 
-void LinkedList::print_backward() {
+/*void LinkedList::print_backward() {
 	if (!tail) {
 		std::cout << "The list is empty" << std::endl;
 		return;
@@ -61,7 +84,7 @@ void LinkedList::print_backward() {
 		std::cout << std::setw(10) << (counter++) + 1 << std::setw(25) << temp->number << std::setw(25) << temp->category << std::setw(35) << temp->task << std::endl;
 		temp = temp->prev;
 	}
-}
+}*/
 
 void LinkedList::push_node(int num, std::string tsk) {
 	node* temp = new node(num, tsk, "", 0);
@@ -92,6 +115,38 @@ bool LinkedList::insert_node(int num, const int& index) {
 	return true;
 
 }
+
+void LinkedList::delete_ID(const int ID)
+{
+	node* temp = search_with_value(ID);
+	if (temp == nullptr) return;
+	if (n_nodes() == 1)
+	{
+		head = nullptr;
+		return;
+	}
+	if (temp == head)
+	{
+		head->next->prev = nullptr;
+		head = head->next;
+		delete(temp);
+		return;
+	}
+	if (temp != nullptr)
+	{
+		temp->prev->next = temp->next;
+		if (temp->next) {
+			temp->next->prev = temp->prev;
+		}
+		delete(temp);
+	}
+	if (n_nodes() == 1)
+	{
+		head = nullptr;
+		return;
+	}
+}
+
 
 void LinkedList::delete_index(const int& index = NULL) {
 	if (index == 0) {
@@ -137,9 +192,9 @@ node* LinkedList::search_with_value(const int& val) {
 
 void LinkedList::node_swap(node* left, node* right)
 {
-	node** p1pn;            /* & ptr1->prev->next */
-	node** p1np;            /* & ptr1->next->prev */
-	node** p2pn;            /* & b->prev->next */
+	node** p1pn;            
+	node** p1np;            
+	node** p2pn;            
 	node** p2np;
 	node* temp;
 	if (head == NULL || left == NULL || right == NULL || right == left)
@@ -232,27 +287,51 @@ void LinkedList::sort_priority(int high_low) //bubble sort
 
 int LinkedList::smaller(node* temp1, node* temp2)
 {
-	if (difftime(mktime(&temp1->timer), mktime(&temp2->timer) < 0))
-		return 1;
-	return 0;
+	if (temp1->timer.tm_year != temp2->timer.tm_year)
+	{
+		if (temp1->timer.tm_year < temp2->timer.tm_year)
+			return 1;
+		else return 0;
+	}
+	else if (temp1->timer.tm_mon != temp2->timer.tm_mon)
+	{
+		if (temp1->timer.tm_mon < temp2->timer.tm_mon)
+			return 1;
+		else return 0;
+	}
+	else if (temp1->timer.tm_mday != temp2->timer.tm_mday)
+	{
+		if (temp1->timer.tm_mday < temp2->timer.tm_mday)
+			return 1;
+		else return 0;
+	}
+	else if (temp1->timer.tm_hour != temp2->timer.tm_hour)
+	{
+		if (temp1->timer.tm_hour < temp2->timer.tm_hour)
+			return 1;
+		else return 0;
+	}
+	else if (temp1->timer.tm_min != temp2->timer.tm_min)
+	{
+		if (temp1->timer.tm_min < temp2->timer.tm_min)
+			return 1;
+		else return 0;
+	}
+	else return 0;
 }
 
 void LinkedList::check_notifications()
 {
-	//cout <<endl<< "Notification" << endl;
 	Sleep(1000);
-	//cout << endl << "After Sleep " << n_nodes() << endl;
+
 	node* temp = head;
-	//cout << "Alarm1";
+
 	if (head == nullptr) return;
-	//cout << "Alarm2";
-	//Sleep(1000);
 	for (int i = 0; i < n_nodes(); i++)
 	{
 		temp->check_alarm();
 		temp = temp->next;
 	}
-	//cout << endl << "Done Loop" << endl;
 }
 
 void LinkedList::sort_time(int high_low) //bubble sort
@@ -280,7 +359,7 @@ void LinkedList::sort_time(int high_low) //bubble sort
 
 
 
-std::ostream& operator<<(std::ostream& out, LinkedList object) {
+/*std::ostream& operator<<(std::ostream& out, LinkedList object) {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, 11);
 	std::cout << std::string(144, '-') << std::endl;
@@ -291,4 +370,4 @@ std::ostream& operator<<(std::ostream& out, LinkedList object) {
 	for (int i = 0; i < n; i++)
 		cout << object.print_forward(i);
 	return out;
-}
+}*/
