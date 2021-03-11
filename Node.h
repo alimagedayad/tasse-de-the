@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <time.h>
+#include "fort.hpp"
 using namespace std;
 class node
 {
@@ -19,6 +20,6 @@ public:
 
 	void set_timer(int year, int month, int day, int hour, int min);
 	void check_alarm();
-	friend std::ostream& operator<<(std::ostream& out, node);
+	//friend std::ostream& operator<<(std::ostream& out, node);
 };
 

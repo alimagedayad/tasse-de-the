@@ -15,9 +15,9 @@ public:
 
 	void push_node(int, std::string);
 
-	node print_forward(int);
+	string display_list(int);
 
-	void print_backward();
+	//void print_backward();
 
 	bool insert_node(int, const int&);
 
@@ -26,7 +26,7 @@ public:
 	node* pop_node();
 
 	node* search_with_value(const int&);
-
+	void delete_ID(const int ID);
 	void node_swap(node* left, node* right);
 	void sort_time(int high_low);
 	void swap_index(int i, int j);
@@ -35,7 +35,7 @@ public:
 	int n_nodes();
 	void sort_priority(int high_low);
 	void check_notifications();
-	friend std::ostream& operator<<(std::ostream& out, LinkedList);
+	//friend std::ostream& operator<<(std::ostream& out, LinkedList);
 	// private
 private:
 	node* head;
