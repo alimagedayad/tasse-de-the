@@ -1,16 +1,18 @@
+.idea/
+CMakeLists.txt
+build/
+cmake-build-debug/
 # Prerequisites
 *.d
 
 .vs/
 
+.DS_Store
 # Compiled Object files
 *.slo
 *.lo
 *.o
 *.obj
-
-
-xyz/
 
 # Precompiled Headers
 *.gch
@@ -409,4 +411,5 @@ MigrationBackup/
 .ionide/
 
 # Fody - auto-generated XML schema
+FodyWeavers.xsd
 FodyWeavers.xsd
