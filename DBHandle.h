@@ -18,12 +18,11 @@ public:
     json fetchTasks();
     void printDB();
     void insertTask();
-    void create2DVector(std::vector<std::vector<std::string>>&, std::vector<std::string>*, std::vector<std::string> *, std::vector<std::string> *,
-                        std::vector<std::string> *, std::vector<std::string> *);
+    void create2DVector(
+            std::vector<std::vector<std::string>>&, std::vector<std::string>*, std::vector<std::string> *,
+            std::vector<std::string> *,std::vector<std::string> *, std::vector<std::string> *);
     json constructJSON(std::vector<std::vector<std::string>> );
     std::string getURL();
     private:
     std::string url;
 };
-
-
