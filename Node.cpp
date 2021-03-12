@@ -1,9 +1,7 @@
 #include "Node.h"
 #include <iomanip>
-#include <Windows.h>
-#include <Mmsystem.h>
-#include <mciapi.h>
 #pragma comment(lib, "Winmm.lib")
+
 node::node(int num, std::string tsk, std::string ctg, int cnt) {
     task = tsk;
     ID = cnt;
@@ -54,13 +52,16 @@ void node::check_alarm()
         hour = to_string(this->timer.tm_hour);
         minute = to_string(this->timer.tm_min);
         table << this->ID << this->number << this->category << this->task << day + "/" + month + '/' + year << hour + ':' + minute << fort::endr;
-        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-        SetConsoleTextAttribute(hConsole, 4);
+//        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+//        SetConsoleTextAttribute(hConsole, 4);
         //mciSendString("open \"*.mp3\" Alarm.mp3", NULL, 0, NULL);
         //mciSendString("play mp3", NULL, 0, NULL);
         cout << endl<< table.to_string() << endl;
-        SetConsoleTextAttribute(hConsole, 15);
-        system("PAUSE");
+//        SetConsoleTextAttribute(hConsole, 15);
+        #ifdef __APPLE__
+            system("read -n 1 -s -p \"Press any key to continue...\"");
+        #elif __Win32
+            system("pause");
+        #endif
     }
 }
-

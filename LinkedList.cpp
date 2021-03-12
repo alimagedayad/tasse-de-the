@@ -2,6 +2,10 @@
 #include <iomanip>
 #include "fort.hpp"
 
+#ifdef __APPLE__
+#include <unistd.h>
+#endif
+
 
 using namespace std;
 LinkedList::LinkedList() {
@@ -322,7 +326,11 @@ int LinkedList::smaller(node* temp1, node* temp2)
 
 void LinkedList::check_notifications()
 {
+    #ifdef __APPLE__
+    usleep(1000);
+    #else
     Sleep(1000);
+    #endif
 
     node* temp = head;
 

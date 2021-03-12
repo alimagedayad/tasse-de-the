@@ -24,15 +24,20 @@ void todo_list_thread(LinkedList *todo_list, int* command)
 
     while (*command != -1) {
         string table;
-        system("CLS");
-        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-        SetConsoleTextAttribute(hConsole, 13);
+        #ifdef __APPLE__
+        system("clear");
+        #elif __Win32
+        system("cls");
+        #endif
+
+//        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+//        SetConsoleTextAttribute(hConsole, 13);
         cout << setw(50) << "Welcome to the TODO List application" << endl;
         cout << "We are now entering the terminal verion of the todo list: " << endl;
-        SetConsoleTextAttribute(hConsole, 2);
+//        SetConsoleTextAttribute(hConsole, 2);
         table = todo_list->display_list(0);
         cout << table << endl;
-        SetConsoleTextAttribute(hConsole, 15);
+//        SetConsoleTextAttribute(hConsole, 15);
         cout << "Please choose an intruction from the following list: " << endl;
         cout << "1-> Add a new task \n2->Delete an existing task with ID \n3->Edit a task\n4->sort list by priority (descending)\n5->sort list by priority (ascending)\n6-> sort list by soonest task\n-1->Terminate program" << endl;
         cout << "Enter command: ";
@@ -127,6 +132,8 @@ void todo_list_thread(LinkedList *todo_list, int* command)
 }
 
 int main() {
+
+
     int command = NULL;
     LinkedList todo_list;
 
