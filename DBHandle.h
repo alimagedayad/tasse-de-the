@@ -17,12 +17,17 @@ public:
     DBHandle(std::string url);
     json fetchTasks();
     void printDB();
-    void insertTask();
-    void create2DVector(
-            std::vector<std::vector<std::string>>&, std::vector<std::string>*, std::vector<std::string> *,
-            std::vector<std::string> *,std::vector<std::string> *, std::vector<std::string> *);
-    json constructJSON(std::vector<std::vector<std::string>> );
+    int insertTask(const json&);
+    static void create2DVector(std::vector<std::vector<std::string>>& data, std::vector<std::string>*a = nullptr, std::vector<std::string> *b = nullptr, std::vector<std::string> *c = nullptr,
+                               std::vector<std::string> *d = nullptr, std::vector<std::string> *e = nullptr);
+//    static void create2DVector(
+//            std::vector<std::vector<std::string>>&, std::vector<std::string>*, std::vector<std::string> *,
+//            std::vector<std::string> *,std::vector<std::string> *, std::vector<std::string> *);
+    json constructJSON(std::vector<std::vector<std::string>>);
     std::string getURL();
-    private:
+    static void printJSON(json);
+    static void printVector(std::vector<std::vector<std::string>>);
+private:
     std::string url;
+
 };
