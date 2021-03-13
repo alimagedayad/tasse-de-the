@@ -4,10 +4,18 @@
 #include <string>
 #include <iomanip>
 #include <thread>
+#include "DBHandle.h"
+#include <vector>
+#include <nlohmann/json.hpp>
 #include "fort.hpp"
+
+using json = nlohmann::json;
+
 int tskID = 1;
 
 using namespace std;
+
+vector<vector<string>> taskReq;
 
 void check_alerts(LinkedList * todo, int * command)
 {
@@ -19,7 +27,7 @@ void check_alerts(LinkedList * todo, int * command)
     }
 }
 
-void todo_list_thread(LinkedList *todo_list, int* command)
+void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
 {
 
     while (*command != -1) {
@@ -29,6 +37,11 @@ void todo_list_thread(LinkedList *todo_list, int* command)
         #elif __Win32
         system("cls");
         #endif
+
+        vector<string> taskArr;
+
+
+
 
 //        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 //        SetConsoleTextAttribute(hConsole, 13);
@@ -43,6 +56,8 @@ void todo_list_thread(LinkedList *todo_list, int* command)
         cout << "Enter command: ";
         cin >> *command;
         if (*command == 1) {
+
+
             int val, day, month, year, hour, minute;
             string task, ctg;
             cout << "Enter task description: ";
@@ -63,9 +78,50 @@ void todo_list_thread(LinkedList *todo_list, int* command)
             cin >> hour;
             cout << "Enter minute (0-59): ";
             cin >> minute;
+
+            //        res[i]["taskPriority"] = arr[i][0];
+//        res[i]["tid"] = arr[i][1];
+//        res[i]["content"] = arr[i][2];
+//        res[i]["category"] = arr[i][3];
+//        res[i]["taskDay"] = arr[i][4];
+//        res[i]["taskMonth"] = arr[i][5];
+//        res[i]["taskYear"] = arr[i][6];
+//        res[i]["taskHour"] = arr[i][7];
+//        res[i]["taskMinute"] = arr[i][8];
+//        res[i]["taskSecond"] = arr[i][9];
+            taskArr.push_back(to_string(val));
+            taskArr.push_back(to_string(tskID));
+            taskArr.push_back(task);
+            taskArr.push_back(ctg);
+            taskArr.push_back(to_string(day));
+            taskArr.push_back(to_string(month));
+            taskArr.push_back(to_string(year));
+            taskArr.push_back(to_string(hour));
+            taskArr.push_back(to_string(minute));
+            taskArr.push_back(to_string(0));
+
+            db->create2DVector(taskReq, &taskArr);
+
+
+//            db->printVector(taskReq);
+            json req = db->constructJSON(taskReq);
+
+//            db->printJSON(req);
+
+
+            int reqCode = db->insertTask(req);
+
+//
+
             todo_list->add_node(val, tskID, task, ctg, day, month - 1, year - 1900, hour, minute);
             tskID++;
+
+            cout << "DB response code: " << reqCode << endl;
+
         }
+
+
+
         else if (*command == 2) {
             int del_id;
             cout << "Enter the task ID you want to delete: " << endl;
@@ -137,7 +193,11 @@ int main() {
     int command = NULL;
     LinkedList todo_list;
 
-    thread t1{ [&]() {todo_list_thread(&todo_list, &command); } };
+    DBHandle db("http://localhost:3000/");
+
+    db.printDB();
+
+    thread t1{ [&]() {todo_list_thread(&todo_list, &command, &db); } };
     thread t2{ [&]() {check_alerts(&todo_list, &command); } };
     t1.join();
     t2.join();
