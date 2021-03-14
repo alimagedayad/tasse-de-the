@@ -1,7 +1,7 @@
 #include "LinkedList.h"
 #include <iomanip>
 #include "fort.hpp"
-
+#include <vector>
 #ifdef __APPLE__
 #include <unistd.h>
 #endif
@@ -23,8 +23,6 @@ void LinkedList::edit_node(int num, int ID, std::string tsk, std::string ctg, in
     temp->set_timer(year, month, day, hour, minute);
 }
 
-
-
 void LinkedList::add_node(int num, int ID , std::string tsk, std::string ctg, int day, int month, int year, int hour, int minute) {
     if (head == nullptr) {
         head = new node(num,tsk,ctg, ID);
@@ -43,6 +41,31 @@ void LinkedList::add_node(int num, int ID , std::string tsk, std::string ctg, in
         temp->next->prev = temp;
         tail = temp->next;
     }
+}
+
+std::vector<std::vector<std::string>> LinkedList::exportNode(int index) {
+    vector<vector<string>> exportedList;
+    if (!head) {
+        return exportedList;
+    }
+    node* temp = find_index(index);
+    while (temp != nullptr) {
+        vector<string> vNode;
+        vNode.push_back(to_string(temp->number));
+        vNode.push_back(to_string(temp->ID));
+        vNode.push_back(temp->task);
+        vNode.push_back(temp->category);
+        vNode.push_back(to_string(temp->timer.tm_mday));
+        vNode.push_back(to_string((temp->timer.tm_mon)+1));
+        vNode.push_back(to_string((temp->timer.tm_year)+1900));
+        vNode.push_back(to_string(temp->timer.tm_hour));
+        vNode.push_back(to_string(temp->timer.tm_min));
+        vNode.push_back(to_string(0));
+        exportedList.push_back(vNode);
+        temp = temp->next;
+    }
+
+    return exportedList;
 }
 
 string LinkedList::display_list(int index) {

@@ -8,6 +8,7 @@
 #include <vector>
 #include <cpr/cpr.h>
 #include <nlohmann/json.hpp>
+#include "LinkedList.h"
 
 using json = nlohmann::json;
 
@@ -17,6 +18,7 @@ public:
     DBHandle(std::string url);
     json fetchTasks();
     void printDB();
+    json emptyDB();
     int insertTask(const json&);
     static void create2DVector(std::vector<std::vector<std::string>>& data, std::vector<std::string>*a = nullptr, std::vector<std::string> *b = nullptr, std::vector<std::string> *c = nullptr,
                                std::vector<std::string> *d = nullptr, std::vector<std::string> *e = nullptr);
@@ -26,6 +28,7 @@ public:
     json constructJSON(std::vector<std::vector<std::string>>);
     std::string getURL();
     static void printJSON(json);
+    static void initLinkedList(json, LinkedList*);
     static void printVector(std::vector<std::vector<std::string>>);
 private:
     std::string url;
