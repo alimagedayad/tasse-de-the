@@ -1,6 +1,7 @@
 #include "Node.h"
 #include <iostream>
 //#include <Windows.h>
+#include <vector>
 #pragma once
 class LinkedList
 {
@@ -24,7 +25,7 @@ public:
     void delete_index(const int&);
 
     node* pop_node();
-
+    std::vector<std::vector<std::string>> exportNode(int);
     node* search_with_value(const int&);
     void delete_ID(const int ID);
     void node_swap(node* left, node* right);

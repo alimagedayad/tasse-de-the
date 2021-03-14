@@ -61,6 +61,13 @@ void DBHandle::printDB(){
     }
 }
 
+json DBHandle::emptyDB() {
+    std::string fetchURL = url + "tasks/delete";
+    cpr::Response r = cpr::Post(cpr::Url{fetchURL.c_str()});
+    json j = json::parse(r.text);
+    return j;
+}
+
 int DBHandle::insertTask(const json& data) {
     std::string fetchURL = url + "task/add";
 
@@ -90,6 +97,26 @@ void DBHandle::printVector(std::vector<std::vector<std::string>> x){
 void DBHandle::printJSON(json x) {
     for(auto & i : x){
         std::cout << i << std::endl;
+    }
+}
+
+
+
+void DBHandle::initLinkedList(json DBData, LinkedList* list) {
+    if(!DBData.empty()){
+
+        std::cout << "Populating " << DBData.size() << " records from the database!" << std::endl;
+
+        for(auto & i : DBData){
+            list->add_node(i["priority"].get<int>(),
+                  i["tID"].get<int>(), i["task"].get<std::string>(),i["category"].get<std::string>(),
+                          i["taskDay"].get<int>(), ((i["taskMonth"].get<int>()) - 1), ((i["taskYear"].get<int>()) - 1900),
+                                  i["taskHour"].get<int>(), i["taskMinute"].get<int>()
+                           );
+
+//                        list->add_node((int)i["priority"], (int)i["tID"], i["task"], i["category"], (int)i["taskDay"]
+//            , ((int)i["taskMonth"]) - 1, ((int)i["taskYear"] - 1900), (int)i["taskHour"], (int)i["taskMinute"]);
+        }
     }
 }
 

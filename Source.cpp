@@ -29,6 +29,8 @@ void check_alerts(LinkedList * todo, int * command)
 
 void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
 {
+    json tempJS = db->fetchTasks();
+    db->initLinkedList(tempJS, todo_list);
 
     while (*command != -1) {
         string table;
@@ -57,7 +59,6 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
         cin >> *command;
         if (*command == 1) {
 
-
             int val, day, month, year, hour, minute;
             string task, ctg;
             cout << "Enter task description: ";
@@ -79,16 +80,6 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             cout << "Enter minute (0-59): ";
             cin >> minute;
 
-            //        res[i]["taskPriority"] = arr[i][0];
-//        res[i]["tid"] = arr[i][1];
-//        res[i]["content"] = arr[i][2];
-//        res[i]["category"] = arr[i][3];
-//        res[i]["taskDay"] = arr[i][4];
-//        res[i]["taskMonth"] = arr[i][5];
-//        res[i]["taskYear"] = arr[i][6];
-//        res[i]["taskHour"] = arr[i][7];
-//        res[i]["taskMinute"] = arr[i][8];
-//        res[i]["taskSecond"] = arr[i][9];
             taskArr.push_back(to_string(val));
             taskArr.push_back(to_string(tskID));
             taskArr.push_back(task);
@@ -101,23 +92,14 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             taskArr.push_back(to_string(0));
 
             db->create2DVector(taskReq, &taskArr);
-
-
-//            db->printVector(taskReq);
             json req = db->constructJSON(taskReq);
-
-//            db->printJSON(req);
-
 
             int reqCode = db->insertTask(req);
 
-//
+            taskReq.clear();
 
             todo_list->add_node(val, tskID, task, ctg, day, month - 1, year - 1900, hour, minute);
             tskID++;
-
-            cout << "DB response code: " << reqCode << endl;
-
         }
 
 
@@ -127,6 +109,22 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             cout << "Enter the task ID you want to delete: " << endl;
             cin >> del_id;
             todo_list->delete_ID(del_id);
+
+            std::vector<std::vector<std::string>> exportedNode = todo_list->exportNode(0);
+            db->emptyDB();
+            json dReq = db->constructJSON(exportedNode);
+
+            // Debugging only
+            // TODO: Remove in production
+            cout << "dReq size " << dReq.size() << endl;
+            db->printJSON(dReq);
+
+
+            // TODO: Uncomment when the test is passed
+//            int reqCode = db->insertTask(req);
+//            if(reqCode == 200){
+//                cout << "Task deleted successfully!" << endl;
+//            }
         }
             /*else if (*command == 3) {
                 cout << todo_list->print_forward(0); system("PAUSE");
@@ -161,6 +159,13 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             cin >> minute;
             todo_list->edit_node(val, i, task, ctg, day, month-1, year-1900, hour, minute);
 
+            std::vector<std::vector<std::string>> exportedNode = todo_list->exportNode(0);
+            db->emptyDB();
+            json req = db->constructJSON(exportedNode);
+            int reqCode = db->insertTask(req);
+            if(reqCode == 200){
+                cout << "Task edited successfully!" << endl;
+            }
         }
         else if (*command == 4)
         {
@@ -194,8 +199,6 @@ int main() {
     LinkedList todo_list;
 
     DBHandle db("http://localhost:3000/");
-
-    db.printDB();
 
     thread t1{ [&]() {todo_list_thread(&todo_list, &command, &db); } };
     thread t2{ [&]() {check_alerts(&todo_list, &command); } };
