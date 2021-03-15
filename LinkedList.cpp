@@ -2,11 +2,10 @@
 #include <iomanip>
 #include "fort.hpp"
 #include <vector>
-#ifdef _WIN32
-#include <Windows.h>
-#else
+#ifdef __APPLE__
 #include <unistd.h>
 #endif
+
 
 using namespace std;
 LinkedList::LinkedList() {
@@ -24,9 +23,9 @@ void LinkedList::edit_node(int num, int ID, std::string tsk, std::string ctg, in
     temp->set_timer(year, month, day, hour, minute);
 }
 
-void LinkedList::add_node(int num, int ID , std::string tsk, std::string ctg, int day, int month, int year, int hour, int minute) {
+void LinkedList::add_node(int num, int ID, std::string tsk, std::string ctg, int day, int month, int year, int hour, int minute) {
     if (head == nullptr) {
-        head = new node(num,tsk,ctg, ID);
+        head = new node(num, tsk, ctg, ID);
         head->set_timer(year, month, day, hour, minute);
         head->prev = head->next = nullptr;
         tail = head;
@@ -37,7 +36,7 @@ void LinkedList::add_node(int num, int ID , std::string tsk, std::string ctg, in
         while (temp->next) {
             temp = temp->next;
         }
-        temp->next = new node(num,tsk,ctg, ID);
+        temp->next = new node(num, tsk, ctg, ID);
         temp->next->set_timer(year, month, day, hour, minute);
         temp->next->prev = temp;
         tail = temp->next;
@@ -57,8 +56,8 @@ std::vector<std::vector<std::string>> LinkedList::exportNode(int index) {
         vNode.push_back(temp->task);
         vNode.push_back(temp->category);
         vNode.push_back(to_string(temp->timer.tm_mday));
-        vNode.push_back(to_string((temp->timer.tm_mon)+1));
-        vNode.push_back(to_string((temp->timer.tm_year)+1900));
+        vNode.push_back(to_string((temp->timer.tm_mon) + 1));
+        vNode.push_back(to_string((temp->timer.tm_year) + 1900));
         vNode.push_back(to_string(temp->timer.tm_hour));
         vNode.push_back(to_string(temp->timer.tm_min));
         vNode.push_back(to_string(0));
@@ -85,8 +84,8 @@ string LinkedList::display_list(int index) {
     table << fort::endr;
     string day, month, year, hour, minute;
     day = to_string(temp->timer.tm_mday);
-    month = to_string((temp->timer.tm_mon)+1);
-    year = to_string((temp->timer.tm_year)+1900);
+    month = to_string((temp->timer.tm_mon) + 1);
+    year = to_string((temp->timer.tm_year) + 1900);
     hour = to_string(temp->timer.tm_hour);
     minute = to_string(temp->timer.tm_min);
     while (temp != nullptr) {
@@ -97,21 +96,21 @@ string LinkedList::display_list(int index) {
 }
 
 /*void LinkedList::print_backward() {
-	if (!tail) {
-		std::cout << "The list is empty" << std::endl;
-		return;
-	}
-	node* temp = tail;
-	int counter = 0;
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hConsole, 11);
-	std::cout << std::setw(10) << "Task ID: " << std::setw(25) << "Task Priority: " << std::setw(25) << "Task Category: " << std::setw(35) << "Task Description: " << std::endl;
-	std::cout << std::string(95, '-') << std::endl;
-	SetConsoleTextAttribute(hConsole, 15);
-	while (temp != nullptr) {
-		std::cout << std::setw(10) << (counter++) + 1 << std::setw(25) << temp->number << std::setw(25) << temp->category << std::setw(35) << temp->task << std::endl;
-		temp = temp->prev;
-	}
+    if (!tail) {
+        std::cout << "The list is empty" << std::endl;
+        return;
+    }
+    node* temp = tail;
+    int counter = 0;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, 11);
+    std::cout << std::setw(10) << "Task ID: " << std::setw(25) << "Task Priority: " << std::setw(25) << "Task Category: " << std::setw(35) << "Task Description: " << std::endl;
+    std::cout << std::string(95, '-') << std::endl;
+    SetConsoleTextAttribute(hConsole, 15);
+    while (temp != nullptr) {
+        std::cout << std::setw(10) << (counter++) + 1 << std::setw(25) << temp->number << std::setw(25) << temp->category << std::setw(35) << temp->task << std::endl;
+        temp = temp->prev;
+    }
 }*/
 
 void LinkedList::push_node(int num, std::string tsk) {
@@ -128,7 +127,7 @@ void LinkedList::push_node(int num, std::string tsk) {
 bool LinkedList::insert_node(int num, const int& index) {
     int counter = 0;
     node* temp = head;
-    node* add_this = new node(num, "", "",0);
+    node* add_this = new node(num, "", "", 0);
     while (temp != nullptr && counter < index - 1) {
         temp = temp->next;
         counter++;
@@ -350,11 +349,11 @@ int LinkedList::smaller(node* temp1, node* temp2)
 
 void LinkedList::check_notifications()
 {
-    #ifdef __APPLE__
+#ifdef __APPLE__
     usleep(1000);
-    #else
+#else
     Sleep(1000);
-    #endif
+#endif
 
     node* temp = head;
 
@@ -377,7 +376,7 @@ void LinkedList::sort_time(int high_low) //bubble sort
         {
             temp1 = find_index(i);
             temp2 = find_index(j);
-            if (smaller(temp2,temp1)) {
+            if (smaller(temp2, temp1)) {
                 swap_index(i, j);
             }
         }
@@ -392,14 +391,14 @@ void LinkedList::sort_time(int high_low) //bubble sort
 
 
 /*std::ostream& operator<<(std::ostream& out, LinkedList object) {
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hConsole, 11);
-	std::cout << std::string(144, '-') << std::endl;
-	std::cout << "|" << std::setfill(' ') << std::setw(10) << "|" << "Task ID" << "|" << std::setfill(' ') << std::setw(20) << "|" << "Task Priority" << "|" << std::setfill(' ') << std::setw(20) << "|" << "Task Category" << "|" << std::setfill(' ') << std::setw(30) << "|" << "Task Description" << "|" << setw(10) << "|" << "Date" << "|" << std::setfill(' ') << std::setw(20) << "|" << "Time" << "|" << std::setw(10) << "|" << std::endl;
-	std::cout << std::string(144, '-') << std::endl;
-	SetConsoleTextAttribute(hConsole, 15);
-	int n = object.n_nodes();
-	for (int i = 0; i < n; i++)
-		cout << object.print_forward(i);
-	return out;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, 11);
+    std::cout << std::string(144, '-') << std::endl;
+    std::cout << "|" << std::setfill(' ') << std::setw(10) << "|" << "Task ID" << "|" << std::setfill(' ') << std::setw(20) << "|" << "Task Priority" << "|" << std::setfill(' ') << std::setw(20) << "|" << "Task Category" << "|" << std::setfill(' ') << std::setw(30) << "|" << "Task Description" << "|" << setw(10) << "|" << "Date" << "|" << std::setfill(' ') << std::setw(20) << "|" << "Time" << "|" << std::setw(10) << "|" << std::endl;
+    std::cout << std::string(144, '-') << std::endl;
+    SetConsoleTextAttribute(hConsole, 15);
+    int n = object.n_nodes();
+    for (int i = 0; i < n; i++)
+        cout << object.print_forward(i);
+    return out;
 }*/
