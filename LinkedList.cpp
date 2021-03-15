@@ -2,10 +2,11 @@
 #include <iomanip>
 #include "fort.hpp"
 #include <vector>
-#ifdef __APPLE__
+#ifdef _WIN32
+#include <Windows.h>
+#else
 #include <unistd.h>
 #endif
-
 
 using namespace std;
 LinkedList::LinkedList() {
