@@ -1,0 +1,67 @@
+#include "Node.h"
+#include <iomanip>
+#pragma comment(lib, "Winmm.lib")
+
+node::node(int num, std::string tsk, std::string ctg, int cnt) {
+    task = tsk;
+    ID = cnt;
+    number = num;
+    category = ctg;
+    notification = 1;
+    completed = 0;
+    prev = nullptr;
+    next = nullptr;
+    timer = { 0 };
+}
+
+/*std::ostream& operator<<(std::ostream& out, node const object) {
+	out << "|" << std::setfill(' ') << std::setw(5) << "|" << object.ID << "|" << std::setfill(' ') << std::setw(20) << "|" << object.number << "|" << std::setfill(' ') << std::setw(20) << "|" << object.category << "|" << std::setfill(' ') << std::setw(30) << "|" << object.task << "|" << std::setw(10) << "|" << object.timer.tm_mday << "/" << object.timer.tm_mon + 1 << "/" << object.timer.tm_year + 1900 << "|" << std::setfill(' ') << std::setw(20) << "|" << object.timer.tm_hour << ":" << object.timer.tm_min << "|" << std::setw(10) << "|" <<  std::endl;
+	return out;
+}*/
+
+void node::set_timer(int year, int month, int day, int hour, int min)
+{
+    timer.tm_sec = 0;
+    timer.tm_min = min;
+    timer.tm_hour = hour;
+    timer.tm_mday = day;
+    timer.tm_mon = month;
+    timer.tm_year = year;
+}
+
+void node::check_alarm()
+{
+    time_t now;
+    now = time(0);
+    if (difftime(now, mktime(&timer)) <= 10 && difftime(now, mktime(&timer)) >= -10 && notification != 0 && timer.tm_year > 0)
+    {
+        notification = 0;
+        fort::char_table table;
+        table << fort::header;
+        table[0][0] = "ID";
+        table[0][1] = "Priority";
+        table[0][2] = "Category";
+        table[0][3] = "Description";
+        table[0][4] = "Date(d/m/y)";
+        table[0][5] = "Time(h:m)";
+        table << fort::endr;
+        string day, month, year, hour, minute;
+        day = to_string(this->timer.tm_mday);
+        month = to_string((this->timer.tm_mon) + 1);
+        year = to_string((this->timer.tm_year) + 1900);
+        hour = to_string(this->timer.tm_hour);
+        minute = to_string(this->timer.tm_min);
+        table << this->ID << this->number << this->category << this->task << day + "/" + month + '/' + year << hour + ':' + minute << fort::endr;
+//        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+//        SetConsoleTextAttribute(hConsole, 4);
+        //mciSendString("open \"*.mp3\" Alarm.mp3", NULL, 0, NULL);
+        //mciSendString("play mp3", NULL, 0, NULL);
+        cout << endl<< table.to_string() << endl;
+//        SetConsoleTextAttribute(hConsole, 15);
+        #ifdef __APPLE__
+            system("read -n 1 -s -p \"Press any key to continue...\"");
+        #elif __Win32
+            system("pause");
+        #endif
+    }
+}
