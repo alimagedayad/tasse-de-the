@@ -6,7 +6,11 @@ cmake-build-debug/
 *.d
 
 .vs/
-
+Debug/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
 .DS_Store
 # Compiled Object files
 *.slo
