@@ -28,11 +28,22 @@ json DBHandle::constructJSON(std::vector<std::vector<std::string>> arr) {
     return res;
 }
 
-json DBHandle::fetchTasks() {
+cpr::Response DBHandle::fetchTasks() {
     std::string fetchURL = url + "tasks/all";
-    cpr::Response r = cpr::Get(cpr::Url{fetchURL.c_str()});
-    json j = json::parse(r.text);
-    return j;
+    cpr::AsyncResponse fr = cpr::GetAsync(cpr::Url(fetchURL));
+    fr.wait(); // This waits until the request is complete
+    cpr::Response r = fr.get(); // Since the request is complete, this returns immediately
+//    std::cout << r.text << std::endl;
+    return r;
+
+//    std::string fetchURL = url + "tasks/all";
+//    cpr::AsyncResponse fr = cpr::GetAsync(cpr::Url{fetchURL.c_str() });
+//    std::cout << "fetchTasks Loading....." << std::endl;
+//    cpr::Response r = fr.get();
+//    std::cout << "Finished loading..." << r.text <<  std::endl;
+////    cpr::Response r = cpr::Get(cpr::Url{fetchURL.c_str()});
+////    json j = json::parse(r.text);
+//    return r;
 }
 
 void DBHandle::create2DVector(std::vector<std::vector<std::string>>& data, std::vector<std::string>*a, std::vector<std::string> *b, std::vector<std::string> *c,
@@ -55,31 +66,47 @@ void DBHandle::create2DVector(std::vector<std::vector<std::string>>& data, std::
 }
 
 void DBHandle::printDB(){
-    json j = fetchTasks();
+    cpr::Response x = fetchTasks();
+    json j = json::parse(x.text);
     for(auto & i : j){
         std::cout << i << std::endl;
     }
 }
 
-json DBHandle::emptyDB() {
+cpr::Response DBHandle::emptyDB() {
     std::string fetchURL = url + "tasks/delete";
-    cpr::Response r = cpr::Post(cpr::Url{fetchURL.c_str()});
-    json j = json::parse(r.text);
-    return j;
+    cpr::AsyncResponse fr = cpr::PostAsync(cpr::Url(fetchURL));
+    fr.wait(); // This waits until the request is complete
+    cpr::Response r = fr.get(); // Since the request is complete, this returns immediately
+//    std::cout << r.text << std::endl;
+    return r;
 }
 
-int DBHandle::insertTask(const json& data) {
-    std::string fetchURL = url + "task/add";
-
-    cpr::Response r = Post(cpr::Url{fetchURL.c_str()},
-                           cpr::Body{data.dump()},
-                           cpr::Header{{"Content-Type", "application/json"}});
-
-    json j = json::parse(r.text);
-    if (j["code"] == 200 && j["response"] == "success") {
-//        std::cout << "Data is inserted successfully" << std::endl;
-        return 200;
+int DBHandle::printStatusCode(int x) {
+    if(x == 200){
+        cout << "Success!" << endl;
     }
+    else
+    {
+        cout << "Error code: " << x << endl;
+    }
+}
+
+cpr::Response DBHandle::insertTask(const json& data) {
+    std::string fetchURL = url + "task/add";
+    cpr::AsyncResponse fr = cpr::PostAsync(
+            cpr::Url{fetchURL.c_str() },
+            cpr::Body{data.dump()},
+            cpr::Header{{"Content-Type", "application/json"}}
+    );
+    fr.wait();
+    cpr::Response r = fr.get(); // Since the request is complete, this returns immediately
+    return r;
+//    cpr::Response r = Post(cpr::Url{fetchURL.c_str()},
+//                           cpr::Body{data.dump()},
+//                           cpr::Header{{"Content-Type", "application/json"}});
+
+
 
 //    else{
 //        std::cout << "An error occurred while inserting the data " << std::endl << std::endl << "For debugging: " << std::endl << "code: " << j["code"] << std::endl  << "response: " << j["response"] << std::endl <<  "body: " << j["body"] << std::endl;
@@ -122,4 +149,13 @@ void DBHandle::initLinkedList(json DBData, LinkedList* list) {
 
 std::string DBHandle::getURL(){
     return url;
+}
+
+int DBHandle::requestCheck(json req){
+    if (req["code"] == 200 && req["response"] == "success") {
+        return 200;
+    }
+    else{
+        return req["code"];
+    }
 }

@@ -2,10 +2,11 @@
 #include <iomanip>
 #include "fort.hpp"
 #include <vector>
-#ifdef __APPLE__
+#ifdef _WIN32
+#include <Windows.h>
+#else
 #include <unistd.h>
 #endif
-
 
 using namespace std;
 LinkedList::LinkedList() {
@@ -25,12 +26,17 @@ void LinkedList::edit_node(int num, int ID, std::string tsk, std::string ctg, in
 
 void LinkedList::add_node(int num, int ID, std::string tsk, std::string ctg, int day, int month, int year, int hour, int minute) {
     if (head == nullptr) {
+        cout << "Hour: " << hour << "Min: " << minute << endl <<
+             typeid(hour).name() << typeid(minute).name();
+        head = new node(num,tsk,ctg, ID);
         head = new node(num, tsk, ctg, ID);
         head->set_timer(year, month, day, hour, minute);
         head->prev = head->next = nullptr;
         tail = head;
     }
     else {
+        cout << "Hour: " << hour << "Min: " << minute << endl <<
+        typeid(hour).name() << typeid(minute).name();
         node* temp;
         temp = head;
         while (temp->next) {
@@ -46,10 +52,12 @@ void LinkedList::add_node(int num, int ID, std::string tsk, std::string ctg, int
 std::vector<std::vector<std::string>> LinkedList::exportNode(int index) {
     vector<vector<string>> exportedList;
     if (!head) {
+        std::cout << "!head" << std::endl;
         return exportedList;
     }
     node* temp = find_index(index);
     while (temp != nullptr) {
+        std::cout << "while != nullptr \n id: " << temp->ID << std::endl;
         vector<string> vNode;
         vNode.push_back(to_string(temp->number));
         vNode.push_back(to_string(temp->ID));
@@ -64,7 +72,6 @@ std::vector<std::vector<std::string>> LinkedList::exportNode(int index) {
         exportedList.push_back(vNode);
         temp = temp->next;
     }
-
     return exportedList;
 }
 
@@ -88,6 +95,7 @@ string LinkedList::display_list(int index) {
     year = to_string((temp->timer.tm_year) + 1900);
     hour = to_string(temp->timer.tm_hour);
     minute = to_string(temp->timer.tm_min);
+    cout << "Day: " << day << " Month: " << month << "Year: " << year << endl << "Hour: " << hour << "Minute: " << minute << endl;
     while (temp != nullptr) {
         table << temp->ID << temp->number << temp->category << temp->task << day + "/" + month + '/' + year << hour + ':' + minute << fort::endr;
         temp = temp->next;
@@ -145,35 +153,34 @@ bool LinkedList::insert_node(int num, const int& index) {
 
 void LinkedList::delete_ID(const int ID)
 {
-    node* temp = search_with_value(ID);
-    if (temp == nullptr) return;
-    if (n_nodes() == 1)
-    {
-        head = nullptr;
-        return;
-    }
-    if (temp == head)
-    {
-        head->next->prev = nullptr;
-        head = head->next;
-        delete(temp);
-        return;
-    }
-    if (temp != nullptr)
-    {
-        temp->prev->next = temp->next;
-        if (temp->next) {
-            temp->next->prev = temp->prev;
+        node* temp = search_with_value(ID);
+        if (temp == nullptr) return;
+        if (n_nodes() == 1)
+        {
+            head = nullptr;
+            return;
         }
-        delete(temp);
-    }
-    if (n_nodes() == 1)
-    {
-        head = nullptr;
-        return;
-    }
+        if (temp == head)
+        {
+            head->next->prev = nullptr;
+            head = head->next;
+            delete(temp);
+            return;
+        }
+        if (temp != nullptr)
+        {
+            temp->prev->next = temp->next;
+            if (temp->next) {
+                temp->next->prev = temp->prev;
+            }
+            delete(temp);
+        }
+        if (n_nodes() == 1)
+        {
+            head = nullptr;
+            return;
+        }
 }
-
 
 void LinkedList::delete_index(const int& index = NULL) {
     if (index == 0) {
@@ -183,7 +190,7 @@ void LinkedList::delete_index(const int& index = NULL) {
         delete(temp);
         return;
     }
-    if (index != NULL) {
+    else if (index != NULL) {
         node* temp = head;
         for (int i = 0; i < index; i++) {
             if (temp->next) { temp = temp->next; }

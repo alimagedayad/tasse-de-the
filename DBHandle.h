@@ -16,10 +16,12 @@ class DBHandle {
 
 public:
     DBHandle(std::string url);
-    json fetchTasks();
+    cpr::Response fetchTasks();
     void printDB();
-    json emptyDB();
-    int insertTask(const json&);
+    cpr::Response emptyDB();
+    int requestCheck(json);
+    int printStatusCode(int);
+    cpr::Response insertTask(const json&);
     static void create2DVector(std::vector<std::vector<std::string>>& data, std::vector<std::string>*a = nullptr, std::vector<std::string> *b = nullptr, std::vector<std::string> *c = nullptr,
                                std::vector<std::string> *d = nullptr, std::vector<std::string> *e = nullptr);
 //    static void create2DVector(

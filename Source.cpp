@@ -8,6 +8,7 @@
 #include <vector>
 #include <nlohmann/json.hpp>
 #include "fort.hpp"
+#include<unistd.h>
 
 using json = nlohmann::json;
 
@@ -16,6 +17,8 @@ int tskID = 1;
 using namespace std;
 
 vector<vector<string>> taskReq;
+
+std::vector<std::vector<std::string>> exportedNode;
 
 void check_alerts(LinkedList * todo, int * command)
 {
@@ -29,8 +32,9 @@ void check_alerts(LinkedList * todo, int * command)
 
 void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
 {
-    json tempJS = db->fetchTasks();
-    db->initLinkedList(tempJS, todo_list);
+
+    cpr::Response tempJS = db->fetchTasks();
+    db->initLinkedList(json::parse(tempJS.text), todo_list);
 
     while (*command != -1) {
         string table;
@@ -93,32 +97,52 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
 
             db->create2DVector(taskReq, &taskArr);
             json req = db->constructJSON(taskReq);
-
-            int reqCode = db->insertTask(req);
-
+            cpr::Response reqCode = db->insertTask(req);
+            auto reqRes = json::parse(reqCode.text);
+            int responseCode = db->requestCheck(reqRes);
+            db->printStatusCode(responseCode);
             taskReq.clear();
-
             todo_list->add_node(val, tskID, task, ctg, day, month - 1, year - 1900, hour, minute);
             tskID++;
         }
-
-
 
         else if (*command == 2) {
             int del_id;
             cout << "Enter the task ID you want to delete: " << endl;
             cin >> del_id;
             todo_list->delete_ID(del_id);
+            exportedNode = todo_list->exportNode(todo_list->n_nodes());
 
-            std::vector<std::vector<std::string>> exportedNode = todo_list->exportNode(0);
-            db->emptyDB();
+            cpr::Response reqCode = db->emptyDB();
+            auto reqRes = json::parse(reqCode.text);
+            int responseCode = db->requestCheck(reqRes);
+            db->printStatusCode(responseCode);
+
+            // Insert the populated records
             json dReq = db->constructJSON(exportedNode);
+            cout << "exportedNode size: " << dReq.size() << endl;
+            db->printJSON(dReq);
+            reqCode = db->insertTask(dReq);
+            reqRes = json::parse(reqCode.text);
+            responseCode = db->requestCheck(reqRes);
+
+//            cpr::Response reqCode = db->insertTask(req);
+//            auto reqRes = json::parse(reqCode.text);
+//            int responseCode = db->requestCheck(reqRes);
+//            db->printStatusCode(responseCode);
+//            taskReq.clear();
 
             // Debugging only
             // TODO: Remove in production
-            cout << "dReq size " << dReq.size() << endl;
-            db->printJSON(dReq);
-
+//            cout << "dReq size " << dReq.size() << endl;
+//            db->printJSON(dReq);
+//            exportedNode = todo_list->exportNode(0);
+//            db->emptyDB();
+//            json req = db->constructJSON(exportedNode);
+//            int reqCode = db->insertTask(req);
+//            if(reqCode == 200){
+//                cout << "Task edited successfully!" << endl;
+//            }
 
             // TODO: Uncomment when the test is passed
 //            int reqCode = db->insertTask(req);
@@ -159,13 +183,25 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             cin >> minute;
             todo_list->edit_node(val, i, task, ctg, day, month-1, year-1900, hour, minute);
 
-            std::vector<std::vector<std::string>> exportedNode = todo_list->exportNode(0);
-            db->emptyDB();
+            exportedNode = todo_list->exportNode(0);
+
+            //resetting IDs
+            cpr::Response reqCode = db->emptyDB();
+            auto reqRes = json::parse(reqCode.text);
+            int responseCode = db->requestCheck(reqRes);
+            db->printStatusCode(responseCode);
+
+            // Inserting edited records
             json req = db->constructJSON(exportedNode);
-            int reqCode = db->insertTask(req);
-            if(reqCode == 200){
-                cout << "Task edited successfully!" << endl;
-            }
+            reqCode = db->insertTask(req);
+            reqRes = json::parse(reqCode.text);
+            responseCode = db->requestCheck(reqRes);
+            db->printStatusCode(responseCode);
+
+//            int reqCode = db->insertTask(req);
+//            if(reqCode == 200){
+//                cout << "Task edited successfully!" << endl;
+//            }
         }
         else if (*command == 4)
         {
@@ -198,7 +234,7 @@ int main() {
     int command = NULL;
     LinkedList todo_list;
 
-    DBHandle db("http://localhost:3000/");
+    DBHandle db("https://TDTDatabase.alimagedayad.repl.co/");
 
     thread t1{ [&]() {todo_list_thread(&todo_list, &command, &db); } };
     thread t2{ [&]() {check_alerts(&todo_list, &command); } };
