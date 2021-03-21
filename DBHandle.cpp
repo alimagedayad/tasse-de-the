@@ -129,12 +129,12 @@ void DBHandle::printJSON(json x) {
 
 
 
-void DBHandle::initLinkedList(json DBData, LinkedList* list) {
+void DBHandle::initLinkedList(json DBData, LinkedList* list, int& count) {
+    int temp = 0;
     if(!DBData.empty()){
-
         std::cout << "Populating " << DBData.size() << " records from the database!" << std::endl;
-
         for(auto & i : DBData){
+            temp = i["tID"].get<int>();
             list->add_node(i["priority"].get<int>(),
                   i["tID"].get<int>(), i["task"].get<std::string>(),i["category"].get<std::string>(),
                           i["taskDay"].get<int>(), ((i["taskMonth"].get<int>()) - 1), ((i["taskYear"].get<int>()) - 1900),
@@ -144,7 +144,13 @@ void DBHandle::initLinkedList(json DBData, LinkedList* list) {
 //                        list->add_node((int)i["priority"], (int)i["tID"], i["task"], i["category"], (int)i["taskDay"]
 //            , ((int)i["taskMonth"]) - 1, ((int)i["taskYear"] - 1900), (int)i["taskHour"], (int)i["taskMinute"]);
         }
+
+        temp++;
     }
+    else{
+        temp = 1;
+    }
+    count = temp;
 }
 
 std::string DBHandle::getURL(){

@@ -30,7 +30,7 @@ public:
     json constructJSON(std::vector<std::vector<std::string>>);
     std::string getURL();
     static void printJSON(json);
-    static void initLinkedList(json, LinkedList*);
+    static void initLinkedList(json, LinkedList*, int&);
     static void printVector(std::vector<std::vector<std::string>>);
 private:
     std::string url;

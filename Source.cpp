@@ -32,10 +32,8 @@ void check_alerts(LinkedList * todo, int * command)
 
 void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
 {
-
     cpr::Response tempJS = db->fetchTasks();
-    db->initLinkedList(json::parse(tempJS.text), todo_list);
-
+    db->initLinkedList(json::parse(tempJS.text), todo_list, tskID);
     while (*command != -1) {
         string table;
         #ifdef __APPLE__
@@ -94,7 +92,6 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             taskArr.push_back(to_string(hour));
             taskArr.push_back(to_string(minute));
             taskArr.push_back(to_string(0));
-
             db->create2DVector(taskReq, &taskArr);
             json req = db->constructJSON(taskReq);
             cpr::Response reqCode = db->insertTask(req);
