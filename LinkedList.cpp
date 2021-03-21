@@ -26,8 +26,7 @@ void LinkedList::edit_node(int num, int ID, std::string tsk, std::string ctg, in
 
 void LinkedList::add_node(int num, int ID, std::string tsk, std::string ctg, int day, int month, int year, int hour, int minute) {
     if (head == nullptr) {
-        cout << "Hour: " << hour << "Min: " << minute << endl <<
-             typeid(hour).name() << typeid(minute).name();
+        cout << "Hour: " << hour << "Min: " << minute << endl <<typeid(hour).name() << typeid(minute).name();
         head = new node(num,tsk,ctg, ID);
         head = new node(num, tsk, ctg, ID);
         head->set_timer(year, month, day, hour, minute);
@@ -75,7 +74,7 @@ std::vector<std::vector<std::string>> LinkedList::exportNode(int index) {
     return exportedList;
 }
 
-string LinkedList::display_list(int index) {
+string LinkedList::display_list(int index, string condition) {
     if (!head) {
         return "The list is empty";
     }
@@ -88,17 +87,80 @@ string LinkedList::display_list(int index) {
     table[0][3] = "Description";
     table[0][4] = "Date(d/m/y)";
     table[0][5] = "Time(h:m)";
+    table[0][6] = "Status";
     table << fort::endr;
-    string day, month, year, hour, minute;
-    day = to_string(temp->timer.tm_mday);
-    month = to_string((temp->timer.tm_mon) + 1);
-    year = to_string((temp->timer.tm_year) + 1900);
-    hour = to_string(temp->timer.tm_hour);
-    minute = to_string(temp->timer.tm_min);
-    cout << "Day: " << day << " Month: " << month << "Year: " << year << endl << "Hour: " << hour << "Minute: " << minute << endl;
-    while (temp != nullptr) {
-        table << temp->ID << temp->number << temp->category << temp->task << day + "/" + month + '/' + year << hour + ':' + minute << fort::endr;
-        temp = temp->next;
+    string day, month, year, hour, minute, status;
+    if (condition == "All") {
+        while (temp != nullptr) {
+            day = to_string(temp->timer.tm_mday);
+            month = to_string((temp->timer.tm_mon) + 1);
+            year = to_string((temp->timer.tm_year) + 1900);
+            hour = to_string(temp->timer.tm_hour);
+            minute = to_string(temp->timer.tm_min);
+            if (temp->completed == false) {
+                status = "Incomplete";
+            }
+            else
+            {
+                status = "Complete";
+            }
+            table << temp->ID << temp->number << temp->category << temp->task << day + "/" + month + '/' + year << hour + ':' + minute << status << fort::endr;
+            temp = temp->next;
+        }
+    }
+    else if (condition == "Completed") {
+        while (temp != nullptr) {
+            day = to_string(temp->timer.tm_mday);
+            month = to_string((temp->timer.tm_mon) + 1);
+            year = to_string((temp->timer.tm_year) + 1900);
+            hour = to_string(temp->timer.tm_hour);
+            minute = to_string(temp->timer.tm_min);
+            if (temp->completed == false) {
+                status = "Incomplete";
+            }
+            else
+            {
+                status = "Complete";
+            }
+            if (status == "Complete")table << temp->ID << temp->number << temp->category << temp->task << day + "/" + month + '/' + year << hour + ':' + minute << status << fort::endr;
+            temp = temp->next;
+        }
+    }
+    else if (condition == "Incomplete") {
+        while (temp != nullptr) {
+            day = to_string(temp->timer.tm_mday);
+            month = to_string((temp->timer.tm_mon) + 1);
+            year = to_string((temp->timer.tm_year) + 1900);
+            hour = to_string(temp->timer.tm_hour);
+            minute = to_string(temp->timer.tm_min);
+            if (temp->completed == false) {
+                status = "Incomplete";
+            }
+            else
+            {
+                status = "Complete";
+            }
+            if (status == "Incomplete")table << temp->ID << temp->number << temp->category << temp->task << day + "/" + month + '/' + year << hour + ':' + minute << status << fort::endr;
+            temp = temp->next;
+        }
+    }
+    else {
+        while (temp != nullptr) {
+            day = to_string(temp->timer.tm_mday);
+            month = to_string((temp->timer.tm_mon) + 1);
+            year = to_string((temp->timer.tm_year) + 1900);
+            hour = to_string(temp->timer.tm_hour);
+            minute = to_string(temp->timer.tm_min);
+            if (temp->completed == false) {
+                status = "Incomplete";
+            }
+            else
+            {
+                status = "Complete";
+            }
+            if (temp->category == condition)table << temp->ID << temp->number << temp->category << temp->task << day + "/" + month + '/' + year << hour + ':' + minute << status << fort::endr;
+            temp = temp->next;
+        }
     }
     return table.to_string();
 }
@@ -120,6 +182,11 @@ string LinkedList::display_list(int index) {
         temp = temp->prev;
     }
 }*/
+
+void LinkedList::complete_node(int id) {
+    node* temp = search_with_value(id);
+    temp->completed = true;
+}
 
 void LinkedList::push_node(int num, std::string tsk) {
     node* temp = new node(num, tsk, "", 0);
@@ -181,7 +248,6 @@ void LinkedList::delete_ID(const int ID)
             return;
         }
 }
-
 void LinkedList::delete_index(const int& index = NULL) {
     if (index == 0) {
         node* temp = head;
@@ -208,9 +274,7 @@ node* LinkedList::pop_node() {
     tail->prev->next = nullptr;
     tail = tail->prev;
     return pop;
-
 }
-
 node* LinkedList::search_with_value(const int& val) {
     node* temp = head;
     while (temp)
@@ -222,8 +286,6 @@ node* LinkedList::search_with_value(const int& val) {
     }
     return NULL;
 }
-
-
 void LinkedList::node_swap(node* left, node* right)
 {
     node** p1pn;
@@ -265,9 +327,7 @@ void LinkedList::node_swap(node* left, node* right)
     temp = right->next;
     right->next = left->next;
     left->next = temp;
-
 }
-
 node* LinkedList::find_index(int i)
 {
     node* temp = head;
@@ -275,10 +335,8 @@ node* LinkedList::find_index(int i)
     return temp;
 }
 
-
 void LinkedList::swap_index(int i, int j)
 {
-
     node* left = find_index(i);
     node* right = find_index(j);
     node_swap(left, right);

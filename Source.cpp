@@ -8,8 +8,9 @@
 #include <vector>
 #include <nlohmann/json.hpp>
 #include "fort.hpp"
-#include<unistd.h>
-
+#include "termcolor.hpp"
+//#include <unistd.h>
+string condition = "All";
 using json = nlohmann::json;
 
 int tskID = 1;
@@ -35,32 +36,27 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
     cpr::Response tempJS = db->fetchTasks();
     db->initLinkedList(json::parse(tempJS.text), todo_list, tskID);
     while (*command != -1) {
-        string table;
         #ifdef __APPLE__
         system("clear");
-        #elif __Win32
+        #elif _WIN32
         system("cls");
         #endif
 
         vector<string> taskArr;
 
-
-
-
-//        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-//        SetConsoleTextAttribute(hConsole, 13);
-        cout << setw(50) << "Welcome to the TODO List application" << endl;
+        string table;
+        cout <<termcolor::magenta<< setw(50) << "Welcome to the TODO List application" << endl;
         cout << "We are now entering the terminal verion of the todo list: " << endl;
-//        SetConsoleTextAttribute(hConsole, 2);
-        table = todo_list->display_list(0);
-        cout << table << endl;
-//        SetConsoleTextAttribute(hConsole, 15);
-        cout << "Please choose an intruction from the following list: " << endl;
-        cout << "1-> Add a new task \n2->Delete an existing task with ID \n3->Edit a task\n4->sort list by priority (descending)\n5->sort list by priority (ascending)\n6-> sort list by soonest task\n-1->Terminate program" << endl;
+
+        table = todo_list->display_list(0,condition);
+        cout <<termcolor::green<< table << endl;
+        cout <<termcolor::reset<< "Please choose an intruction from the following list: " << endl;
+        cout << "1-> Add a new task \n2-> Delete an existing task with ID \n3-> Edit a task\n4-> Sort list by priority (descending)\n5-> Sort list by priority (ascending)\n6-> Sort list by soonest task\n7-> Mark task as completed\n8-> Show all completed tasks\n9-> Show all incompleted tasks\n10-> Show tasks in specific category\n11-> Restore to default\n-1->Terminate program" << endl;
         cout << "Enter command: ";
         cin >> *command;
-        if (*command == 1) {
-
+        switch (*command) {
+        case 1:
+        {
             int val, day, month, year, hour, minute;
             string task, ctg;
             cout << "Enter task description: ";
@@ -81,7 +77,6 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             cin >> hour;
             cout << "Enter minute (0-59): ";
             cin >> minute;
-
             taskArr.push_back(to_string(val));
             taskArr.push_back(to_string(tskID));
             taskArr.push_back(task);
@@ -101,9 +96,10 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             taskReq.clear();
             todo_list->add_node(val, tskID, task, ctg, day, month - 1, year - 1900, hour, minute);
             tskID++;
+            break;
         }
-
-        else if (*command == 2) {
+        case 2:
+        {
             int del_id;
             cout << "Enter the task ID you want to delete: " << endl;
             cin >> del_id;
@@ -123,36 +119,32 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             reqRes = json::parse(reqCode.text);
             responseCode = db->requestCheck(reqRes);
 
-//            cpr::Response reqCode = db->insertTask(req);
-//            auto reqRes = json::parse(reqCode.text);
-//            int responseCode = db->requestCheck(reqRes);
-//            db->printStatusCode(responseCode);
-//            taskReq.clear();
+            //            cpr::Response reqCode = db->insertTask(req);
+            //            auto reqRes = json::parse(reqCode.text);
+            //            int responseCode = db->requestCheck(reqRes);
+            //            db->printStatusCode(responseCode);
+            //            taskReq.clear();
 
-            // Debugging only
-            // TODO: Remove in production
-//            cout << "dReq size " << dReq.size() << endl;
-//            db->printJSON(dReq);
-//            exportedNode = todo_list->exportNode(0);
-//            db->emptyDB();
-//            json req = db->constructJSON(exportedNode);
-//            int reqCode = db->insertTask(req);
-//            if(reqCode == 200){
-//                cout << "Task edited successfully!" << endl;
-//            }
+                        // Debugging only
+                        // TODO: Remove in production
+            //            cout << "dReq size " << dReq.size() << endl;
+            //            db->printJSON(dReq);
+            //            exportedNode = todo_list->exportNode(0);
+            //            db->emptyDB();
+            //            json req = db->constructJSON(exportedNode);
+            //            int reqCode = db->insertTask(req);
+            //            if(reqCode == 200){
+            //                cout << "Task edited successfully!" << endl;
+            //            }
 
-            // TODO: Uncomment when the test is passed
-//            int reqCode = db->insertTask(req);
-//            if(reqCode == 200){
-//                cout << "Task deleted successfully!" << endl;
-//            }
+                        // TODO: Uncomment when the test is passed
+            //            int reqCode = db->insertTask(req);
+            //            if(reqCode == 200){
+            //                cout << "Task deleted successfully!" << endl;
+            //            }
+            break;
         }
-            /*else if (*command == 3) {
-                cout << todo_list->print_forward(0); system("PAUSE");
-            }
-
-            else if (*command == 4) { todo_list->print_backward(); system("PAUSE"); }*/
-        else if (*command == 3)
+        case 3:
         {
             int i = 0;
             cout << "Which task do you want to edit " << endl;
@@ -167,7 +159,7 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             cin >> val;
             cout << "Enter task category: ";
             cin >> ctg;
-            cout << "DATE/TIME "<< endl;
+            cout << "DATE/TIME " << endl;
             cout << "Enter day: ";
             cin >> day;
             cout << "Enter month (1-12): ";
@@ -178,50 +170,64 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             cin >> hour;
             cout << "Enter minute (0-59): ";
             cin >> minute;
-            todo_list->edit_node(val, i, task, ctg, day, month-1, year-1900, hour, minute);
-
+            todo_list->edit_node(val, i, task, ctg, day, month - 1, year - 1900, hour, minute);
             exportedNode = todo_list->exportNode(0);
-
             //resetting IDs
             cpr::Response reqCode = db->emptyDB();
             auto reqRes = json::parse(reqCode.text);
             int responseCode = db->requestCheck(reqRes);
             db->printStatusCode(responseCode);
-
             // Inserting edited records
             json req = db->constructJSON(exportedNode);
             reqCode = db->insertTask(req);
             reqRes = json::parse(reqCode.text);
             responseCode = db->requestCheck(reqRes);
             db->printStatusCode(responseCode);
-
-//            int reqCode = db->insertTask(req);
-//            if(reqCode == 200){
-//                cout << "Task edited successfully!" << endl;
-//            }
+            //            int reqCode = db->insertTask(req);
+            //            if(reqCode == 200){
+            //                cout << "Task edited successfully!" << endl;
+            //            }
+            break;
         }
-        else if (*command == 4)
-        {
-            todo_list->sort_priority(1);
+        case 4: 
+                todo_list->sort_priority(1);
+                break;
+        case 5:
+                todo_list->sort_priority(0);
+                break;
+        case 6:
+                todo_list->sort_time(0);
+                break;
+            /*else if (*command == 9) {
+                mciSendString("open \"Alarm.mp3\" type mpegvideo alias mp3", NULL, 0, NULL);
+                mciSendString("play mp3", NULL, 0, NULL);
+                PlaySound("TF050.WAV", NULL, SND_SYNC);
+                PlaySound("TF050.WAV", NULL, SND_SYNC);
+                PlaySound("TF050.WAV", NULL, SND_SYNC);
+                Sleep(1500);
+                cout << "Audio file playing...\n\n"<<endl;
+                system("PAUSE");
+            }*/
+        case 7:
+            int id;
+            cout << "Enter Node ID: " << endl;
+            cin >> id;
+            todo_list->complete_node(id);
+            break;
+        case 8:
+            condition = "Completed";
+            break;
+        case 9:
+            condition = "Incomplete";
+            break;
+        case 10:
+            cout << "Enter category";
+            cin >> condition;
+            break;
+        case 11:
+            condition = "All";
+            break;
         }
-        else if (*command == 5)
-        {
-            todo_list->sort_priority(0);
-        }
-        else if (*command == 6)
-        {
-            todo_list->sort_time(0);
-        }
-        /*else if (*command == 9) {
-            mciSendString("open \"Alarm.mp3\" type mpegvideo alias mp3", NULL, 0, NULL);
-            mciSendString("play mp3", NULL, 0, NULL);
-            PlaySound("TF050.WAV", NULL, SND_SYNC);
-            PlaySound("TF050.WAV", NULL, SND_SYNC);
-            PlaySound("TF050.WAV", NULL, SND_SYNC);
-            Sleep(1500);
-            cout << "Audio file playing...\n\n"<<endl;
-            system("PAUSE");
-        }*/
     }
 }
 
