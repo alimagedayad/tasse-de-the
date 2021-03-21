@@ -82,7 +82,7 @@ cpr::Response DBHandle::emptyDB() {
     return r;
 }
 
-int DBHandle::printStatusCode(int x) {
+void DBHandle::printStatusCode(int x) {
     if(x == 200){
         cout << "Success!" << endl;
     }
