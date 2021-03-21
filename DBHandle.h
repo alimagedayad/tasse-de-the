@@ -20,7 +20,7 @@ public:
     void printDB();
     cpr::Response emptyDB();
     int requestCheck(json);
-    int printStatusCode(int);
+    void printStatusCode(int);
     cpr::Response insertTask(const json&);
     static void create2DVector(std::vector<std::vector<std::string>>& data, std::vector<std::string>*a = nullptr, std::vector<std::string> *b = nullptr, std::vector<std::string> *c = nullptr,
                                std::vector<std::string> *d = nullptr, std::vector<std::string> *e = nullptr);
