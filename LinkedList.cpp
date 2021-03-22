@@ -24,24 +24,21 @@ void LinkedList::edit_node(int num, int ID, std::string tsk, std::string ctg, in
     temp->set_timer(year, month, day, hour, minute);
 }
 
-void LinkedList::add_node(int num, int ID, std::string tsk, std::string ctg, int day, int month, int year, int hour, int minute) {
+void LinkedList::add_node(int num, int ID, std::string tsk, std::string ctg, int day, int month, int year, int hour, int minute, bool completed) {
     if (head == nullptr) {
-        cout << "Hour: " << hour << "Min: " << minute << endl <<typeid(hour).name() << typeid(minute).name();
-        head = new node(num,tsk,ctg, ID);
-        head = new node(num, tsk, ctg, ID);
+        head = new node(num,tsk,ctg, ID, completed);
+        head = new node(num, tsk, ctg, ID, completed);
         head->set_timer(year, month, day, hour, minute);
         head->prev = head->next = nullptr;
         tail = head;
     }
     else {
-        cout << "Hour: " << hour << "Min: " << minute << endl <<
-        typeid(hour).name() << typeid(minute).name();
         node* temp;
         temp = head;
         while (temp->next) {
             temp = temp->next;
         }
-        temp->next = new node(num, tsk, ctg, ID);
+        temp->next = new node(num, tsk, ctg, ID, completed);
         temp->next->set_timer(year, month, day, hour, minute);
         temp->next->prev = temp;
         tail = temp->next;
@@ -68,7 +65,9 @@ std::vector<std::vector<std::string>> LinkedList::exportNode(int index) {
         vNode.push_back(to_string(temp->timer.tm_hour));
         vNode.push_back(to_string(temp->timer.tm_min));
         vNode.push_back(to_string(0));
+        vNode.push_back(to_string(temp->completed));
         exportedList.push_back(vNode);
+
         temp = temp->next;
     }
     return exportedList;

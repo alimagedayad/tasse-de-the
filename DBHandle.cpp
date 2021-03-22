@@ -23,6 +23,7 @@ json DBHandle::constructJSON(std::vector<std::vector<std::string>> arr) {
             res[i]["taskHour"] = arr[i][7];
             res[i]["taskMinute"] = arr[i][8];
             res[i]["taskSecond"] = arr[i][9];
+            res[i]["taskChecked"] = arr[i][10];
         }
     }
     return res;
@@ -134,11 +135,14 @@ void DBHandle::initLinkedList(json DBData, LinkedList* list, int& count) {
     if(!DBData.empty()){
         std::cout << "Populating " << DBData.size() << " records from the database!" << std::endl;
         for(auto & i : DBData){
-            temp = i["tID"].get<int>();
+            if (temp < i["tID"].get<int>()){
+                temp = i["tID"].get<int>();
+            }
+
             list->add_node(i["priority"].get<int>(),
                   i["tID"].get<int>(), i["task"].get<std::string>(),i["category"].get<std::string>(),
                           i["taskDay"].get<int>(), ((i["taskMonth"].get<int>()) - 1), ((i["taskYear"].get<int>()) - 1900),
-                                  i["taskHour"].get<int>(), i["taskMinute"].get<int>()
+                                  i["taskHour"].get<int>(), i["taskMinute"].get<int>(), i["taskChecked"].get<int>()
                            );
 
 //                        list->add_node((int)i["priority"], (int)i["tID"], i["task"], i["category"], (int)i["taskDay"]

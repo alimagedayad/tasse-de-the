@@ -3,13 +3,13 @@
 #include "termcolor.hpp"
 #pragma comment(lib, "Winmm.lib")
 
-node::node(int num, std::string tsk, std::string ctg, int cnt) {
+node::node(int num, std::string tsk, std::string ctg, int cnt, bool chec) {
     task = tsk;
     ID = cnt;
     number = num;
     category = ctg;
     notification = 1;
-    completed = false;
+    completed = chec;
     prev = nullptr;
     next = nullptr;
     timer = { 0 };

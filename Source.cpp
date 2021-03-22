@@ -42,6 +42,8 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
         system("cls");
         #endif
 
+        cout << "tskID: " << tskID << endl;
+
         vector<string> taskArr;
 
         string table;
@@ -87,6 +89,7 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             taskArr.push_back(to_string(hour));
             taskArr.push_back(to_string(minute));
             taskArr.push_back(to_string(0));
+            taskArr.push_back(to_string(false));
             db->create2DVector(taskReq, &taskArr);
             json req = db->constructJSON(taskReq);
             cpr::Response reqCode = db->insertTask(req);
@@ -103,8 +106,8 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             int del_id;
             cout << "Enter the task ID you want to delete: " << endl;
             cin >> del_id;
-            todo_list->delete_ID(del_id);
-            exportedNode = todo_list->exportNode(todo_list->n_nodes());
+            todo_list->delete_index(del_id);
+            exportedNode = todo_list->exportNode(0);
 
             cpr::Response reqCode = db->emptyDB();
             auto reqRes = json::parse(reqCode.text);
@@ -208,12 +211,23 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
                 cout << "Audio file playing...\n\n"<<endl;
                 system("PAUSE");
             }*/
-        case 7:
+        case 7:{
             int id;
             cout << "Enter Node ID: " << endl;
             cin >> id;
             todo_list->complete_node(id);
+            cpr::Response reqCode = db->emptyDB();
+            auto reqRes = json::parse(reqCode.text);
+            int responseCode = db->requestCheck(reqRes);
+//            db->printStatusCode(responseCode);
+            exportedNode = todo_list->exportNode(0);
+            json dReq = db->constructJSON(exportedNode);
+            cout << "exportedNode size: " << dReq.size() << endl;
+            reqCode = db->insertTask(dReq);
+            reqRes = json::parse(reqCode.text);
+            responseCode = db->requestCheck(reqRes);
             break;
+        }
         case 8:
             condition = "Completed";
             break;

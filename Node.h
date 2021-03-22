@@ -7,7 +7,7 @@ using namespace std;
 class node
 {
 public:
-    node(int num, std::string task, std::string category, int cnt);
+    node(int num, std::string task, std::string category, int cnt, bool check = false);
     int number;
     int ID;
     tm timer;
