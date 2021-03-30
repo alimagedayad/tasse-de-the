@@ -116,8 +116,6 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
 
             // Insert the populated records
             json dReq = db->constructJSON(exportedNode);
-            cout << "exportedNode size: " << dReq.size() << endl;
-            db->printJSON(dReq);
             reqCode = db->insertTask(dReq);
             reqRes = json::parse(reqCode.text);
             responseCode = db->requestCheck(reqRes);
