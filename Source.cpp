@@ -10,6 +10,7 @@
 #include "fort.hpp"
 #include "termcolor.hpp"
 //#include <unistd.h>
+
 string condition = "All";
 using json = nlohmann::json;
 
@@ -33,10 +34,8 @@ void check_alerts(LinkedList * todo, int * command)
 
 void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
 {
-
     cpr::Response tempJS = db->fetchTasks();
-    db->initLinkedList(json::parse(tempJS.text), todo_list);
-
+    db->initLinkedList(json::parse(tempJS.text), todo_list, tskID);
     while (*command != -1) {
         #ifdef __APPLE__
         system("clear");
@@ -45,7 +44,6 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
         #endif
 
         vector<string> taskArr;
-
         string table;
         cout <<termcolor::magenta<< setw(50) << "Welcome to the TODO List application" << endl;
         cout << "We are now entering the terminal verion of the todo list: " << endl;
@@ -89,6 +87,7 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             taskArr.push_back(to_string(hour));
             taskArr.push_back(to_string(minute));
             taskArr.push_back(to_string(0));
+            taskArr.push_back(to_string(false));
             db->create2DVector(taskReq, &taskArr);
             json req = db->constructJSON(taskReq);
             cpr::Response reqCode = db->insertTask(req);
@@ -106,7 +105,8 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             cout << "Enter the task ID you want to delete: " << endl;
             cin >> del_id;
             todo_list->delete_ID(del_id);
-            exportedNode = todo_list->exportNode(todo_list->n_nodes());
+
+            exportedNode = todo_list->exportNode(0);
 
             cpr::Response reqCode = db->emptyDB();
             auto reqRes = json::parse(reqCode.text);
@@ -114,12 +114,15 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             db->printStatusCode(responseCode);
 
             // Insert the populated records
-            json dReq = db->constructJSON(exportedNode);
-            cout << "exportedNode size: " << dReq.size() << endl;
-            db->printJSON(dReq);
-            reqCode = db->insertTask(dReq);
-            reqRes = json::parse(reqCode.text);
-            responseCode = db->requestCheck(reqRes);
+            if (exportedNode.size() > 0){
+                json dReq = db->constructJSON(exportedNode);
+                reqCode = db->insertTask(dReq);
+                reqRes = json::parse(reqCode.text);
+                responseCode = db->requestCheck(reqRes);
+            }
+
+
+
 
             //            cpr::Response reqCode = db->insertTask(req);
             //            auto reqRes = json::parse(reqCode.text);
@@ -210,12 +213,23 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
                 cout << "Audio file playing...\n\n"<<endl;
                 system("PAUSE");
             }*/
-        case 7:
+        case 7:{
             int id;
             cout << "Enter Node ID: " << endl;
             cin >> id;
             todo_list->complete_node(id);
+            cpr::Response reqCode = db->emptyDB();
+            auto reqRes = json::parse(reqCode.text);
+            int responseCode = db->requestCheck(reqRes);
+//            db->printStatusCode(responseCode);
+            exportedNode = todo_list->exportNode(0);
+            json dReq = db->constructJSON(exportedNode);
+            cout << "exportedNode size: " << dReq.size() << endl;
+            reqCode = db->insertTask(dReq);
+            reqRes = json::parse(reqCode.text);
+            responseCode = db->requestCheck(reqRes);
             break;
+        }
         case 8:
             condition = "Completed";
             break;

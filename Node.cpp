@@ -3,13 +3,13 @@
 #include "termcolor.hpp"
 #pragma comment(lib, "Winmm.lib")
 
-node::node(int num, std::string tsk, std::string ctg, int cnt) {
+node::node(int num, std::string tsk, std::string ctg, int cnt, bool chec) {
     task = tsk;
     ID = cnt;
     number = num;
     category = ctg;
     notification = 1;
-    completed = false;
+    completed = chec;
     prev = nullptr;
     next = nullptr;
     timer = { 0 };
@@ -34,7 +34,7 @@ void node::check_alarm()
 {
     time_t now;
     now = time(0);
-    if (difftime(now, mktime(&timer)) <= 10 && difftime(now, mktime(&timer)) >= -10 && notification != 0 && timer.tm_year > 0)
+    if (difftime(now, mktime(&timer)) <= 10 && difftime(now, mktime(&timer)) >= -10 &&notification !=0 &&completed == false && timer.tm_year > 0)
     {
         notification = 0;
         fort::char_table table;
@@ -52,14 +52,10 @@ void node::check_alarm()
         year = to_string((this->timer.tm_year) + 1900);
         hour = to_string(this->timer.tm_hour);
         minute = to_string(this->timer.tm_min);
+        cout << termcolor::red << "This Task is Due now" << endl;
         table << this->ID << this->number << this->category << this->task << day + "/" + month + '/' + year << hour + ':' + minute << fort::endr;
         cout << termcolor::red << endl<< table.to_string() << endl;
         cout << termcolor::reset;
-        #ifdef __APPLE__
-            system("read -n 1 -s -p \"Press any key to continue...\"");
-        #elif _WIN32
-            system("pause");
-        #endif
 
     }
 }

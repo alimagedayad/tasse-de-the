@@ -10,7 +10,7 @@ public:
     LinkedList();
     //members
     // public
-    void add_node(int, int, std::string, std::string, int, int , int , int , int);
+    void add_node(int, int, std::string, std::string, int, int , int , int , int, bool = false);
 
     void edit_node(int, int, std::string, std::string, int , int, int, int , int);
 

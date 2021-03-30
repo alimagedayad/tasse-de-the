@@ -24,24 +24,21 @@ void LinkedList::edit_node(int num, int ID, std::string tsk, std::string ctg, in
     temp->set_timer(year, month, day, hour, minute);
 }
 
-void LinkedList::add_node(int num, int ID, std::string tsk, std::string ctg, int day, int month, int year, int hour, int minute) {
+void LinkedList::add_node(int num, int ID, std::string tsk, std::string ctg, int day, int month, int year, int hour, int minute, bool completed) {
     if (head == nullptr) {
-        cout << "Hour: " << hour << "Min: " << minute << endl <<typeid(hour).name() << typeid(minute).name();
-        head = new node(num,tsk,ctg, ID);
-        head = new node(num, tsk, ctg, ID);
+        head = new node(num,tsk,ctg, ID, completed);
+        head = new node(num, tsk, ctg, ID, completed);
         head->set_timer(year, month, day, hour, minute);
         head->prev = head->next = nullptr;
         tail = head;
     }
     else {
-        cout << "Hour: " << hour << "Min: " << minute << endl <<
-        typeid(hour).name() << typeid(minute).name();
         node* temp;
         temp = head;
         while (temp->next) {
             temp = temp->next;
         }
-        temp->next = new node(num, tsk, ctg, ID);
+        temp->next = new node(num, tsk, ctg, ID, completed);
         temp->next->set_timer(year, month, day, hour, minute);
         temp->next->prev = temp;
         tail = temp->next;
@@ -50,13 +47,8 @@ void LinkedList::add_node(int num, int ID, std::string tsk, std::string ctg, int
 
 std::vector<std::vector<std::string>> LinkedList::exportNode(int index) {
     vector<vector<string>> exportedList;
-    if (!head) {
-        std::cout << "!head" << std::endl;
-        return exportedList;
-    }
     node* temp = find_index(index);
     while (temp != nullptr) {
-        std::cout << "while != nullptr \n id: " << temp->ID << std::endl;
         vector<string> vNode;
         vNode.push_back(to_string(temp->number));
         vNode.push_back(to_string(temp->ID));
@@ -68,9 +60,11 @@ std::vector<std::vector<std::string>> LinkedList::exportNode(int index) {
         vNode.push_back(to_string(temp->timer.tm_hour));
         vNode.push_back(to_string(temp->timer.tm_min));
         vNode.push_back(to_string(0));
+        vNode.push_back(to_string(temp->completed));
         exportedList.push_back(vNode);
         temp = temp->next;
     }
+
     return exportedList;
 }
 
@@ -227,6 +221,7 @@ void LinkedList::delete_ID(const int ID)
             head = nullptr;
             return;
         }
+
         if (temp == head)
         {
             head->next->prev = nullptr;
@@ -234,18 +229,12 @@ void LinkedList::delete_ID(const int ID)
             delete(temp);
             return;
         }
-        if (temp != nullptr)
-        {
+        if (temp != nullptr) {
             temp->prev->next = temp->next;
             if (temp->next) {
                 temp->next->prev = temp->prev;
             }
-            delete(temp);
-        }
-        if (n_nodes() == 1)
-        {
-            head = nullptr;
-            return;
+            delete (temp);
         }
 }
 void LinkedList::delete_index(const int& index = NULL) {
