@@ -10,6 +10,7 @@
 #include "fort.hpp"
 #include "termcolor.hpp"
 //#include <unistd.h>
+
 string condition = "All";
 using json = nlohmann::json;
 
@@ -42,10 +43,7 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
         system("cls");
         #endif
 
-        cout << "tskID: " << tskID << endl;
-
         vector<string> taskArr;
-
         string table;
         cout <<termcolor::magenta<< setw(50) << "Welcome to the TODO List application" << endl;
         cout << "We are now entering the terminal verion of the todo list: " << endl;
@@ -106,7 +104,8 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             int del_id;
             cout << "Enter the task ID you want to delete: " << endl;
             cin >> del_id;
-            todo_list->delete_index(del_id);
+            todo_list->delete_ID(del_id);
+
             exportedNode = todo_list->exportNode(0);
 
             cpr::Response reqCode = db->emptyDB();
@@ -115,10 +114,15 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             db->printStatusCode(responseCode);
 
             // Insert the populated records
-            json dReq = db->constructJSON(exportedNode);
-            reqCode = db->insertTask(dReq);
-            reqRes = json::parse(reqCode.text);
-            responseCode = db->requestCheck(reqRes);
+            if (exportedNode.size() > 0){
+                json dReq = db->constructJSON(exportedNode);
+                reqCode = db->insertTask(dReq);
+                reqRes = json::parse(reqCode.text);
+                responseCode = db->requestCheck(reqRes);
+            }
+
+
+
 
             //            cpr::Response reqCode = db->insertTask(req);
             //            auto reqRes = json::parse(reqCode.text);
