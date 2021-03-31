@@ -61,10 +61,7 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
                 string task, ctg;
                 cout << "Enter task description: ";
                 cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-//                getline(cin, task);
-                checkVariables(task, "Enter task description: ")
-
-
+                getline(cin, task);
                 cout << "Enter task priority: ";
                 cin >> val;
                 cout << "Enter task category: ";
