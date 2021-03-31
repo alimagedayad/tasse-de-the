@@ -22,6 +22,8 @@ public:
 
     bool insert_node(int, const int&);
 
+    void emptyList();
+
     void delete_index(const int&);
 
     node* pop_node();

@@ -68,6 +68,8 @@ std::vector<std::vector<std::string>> LinkedList::exportNode(int index) {
     return exportedList;
 }
 
+
+
 string LinkedList::display_list(int index, string condition) {
     if (!head) {
         return "The list is empty";
@@ -209,7 +211,6 @@ bool LinkedList::insert_node(int num, const int& index) {
     add_this->prev = temp;
     temp->next = add_this;
     return true;
-
 }
 
 void LinkedList::delete_ID(const int ID)
@@ -264,6 +265,20 @@ node* LinkedList::pop_node() {
     tail = tail->prev;
     return pop;
 }
+
+void LinkedList::emptyList(){
+    node* curr;
+    node* prev;
+    curr = prev = head;
+    while(curr != nullptr){
+        prev = curr;
+        delete(prev);
+        curr = curr->next;
+    }
+    head = tail = nullptr;
+    delete(curr);
+}
+
 node* LinkedList::search_with_value(const int& val) {
     node* temp = head;
     while (temp)
