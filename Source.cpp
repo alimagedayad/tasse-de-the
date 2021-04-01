@@ -18,6 +18,41 @@ int tskID = 1;
 
 using namespace std;
 
+template <typename T>
+void checkVariables(T& var, string message){
+    while (cout << message && !(cin >> var)) {
+        cin.clear(); //clear bad input flag
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); //discard input
+        cout << "Invalid input; please re-enter.\n";
+    }
+}
+
+void checkVariables(string& var, std::string message){
+    while (cout << message && !(getline(cin, var))) {
+        cin.clear(); //clear bad input flag
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); //discard input
+        cout << "Invalid input; please re-enter.\n";
+    }
+}
+
+bool inRange(int x,int low, int high){
+    return ((x-low) <= (high-low));
+}
+
+template <typename T>
+void checkVariables(T& var, string message, int min, int max){
+    while (cout << message && !(cin >> var))
+    {
+        cin.clear(); //clear bad input flag
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); //discard input
+        cout << "Invalid input; please re-enter.\n";
+    }
+    while(var < min || var > max){
+        cout << "Range invalid; please re-enter.\n";
+        cin >> var;
+    }
+}
+
 vector<vector<string>> taskReq;
 
 std::vector<std::vector<std::string>> exportedNode;
@@ -59,24 +94,34 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             case 1: {
                 int val, day, month, year, hour, minute;
                 string task, ctg;
-                cout << "Enter task description: ";
+//                cout << "Enter task description: ";
                 cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-                getline(cin, task);
-                cout << "Enter task priority: ";
-                cin >> val;
-                cout << "Enter task category: ";
-                cin >> ctg;
-                cout << "DATE/TIME " << endl;
-                cout << "Enter day: ";
-                cin >> day;
-                cout << "Enter month (1-12): ";
-                cin >> month;
-                cout << "Enter year (1900+): ";
-                cin >> year;
-                cout << "Enter hour (0-23): ";
-                cin >> hour;
-                cout << "Enter minute (0-59): ";
-                cin >> minute;
+                checkVariables(task, "Enter task description: ");
+                checkVariables(ctg, "Enter task category: ");
+                checkVariables(val, "Enter task priority: ");
+                cout << "Date/Time \n";
+                checkVariables(day, "Enter day (1-31): ",1,31);
+                checkVariables(month, "Enter month (1-12): ", 1 ,12);
+                checkVariables(year, "Enter year (1900+): ", 1900, 999999);
+                checkVariables(hour, "Enter hour (0-23): ", 0,23);
+                checkVariables(minute, "Enter minute (0-59): ",0,59);
+
+//                getline(cin, task);
+//                cout << "Enter task priority: ";
+//                cin >> val;
+//                cout << "Enter task category: ";
+//                cin >> ctg;
+//                cout << "DATE/TIME " << endl;
+//                cout << "Enter day: ";
+//                cin >> day;
+//                cout << "Enter month (1-12): ";
+//                cin >> month;
+//                cout << "Enter year (1900+): ";
+//                cin >> year;
+//                cout << "Enter hour (0-23): ";
+//                cin >> hour;
+//                cout << "Enter minute (0-59): ";
+//                cin >> minute;
                 taskArr.push_back(to_string(val));
                 taskArr.push_back(to_string(tskID));
                 taskArr.push_back(task);
@@ -102,10 +147,10 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             }
             case 2: {
                 int del_id;
-                cout << "Enter the task ID you want to delete: " << endl;
-                cin >> del_id;
+//                cout << "Enter the task ID you want to delete: " << endl;
+//                cin >> del_id;
+                checkVariables(del_id, "Enter the task ID you want to delete: ");
                 todo_list->delete_ID(del_id);
-
                 exportedNode = todo_list->exportNode(0);
                 cpr::Response reqCode = db->emptyDB();
                 auto reqRes = json::parse(reqCode.text);
@@ -128,24 +173,33 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
                 cin >> i;
                 int val, day, month, year, hour, minute;
                 string task, ctg;
-                cout << "Enter task description: ";
+//                cout << "Enter task description: ";
                 cin.ignore((numeric_limits<streamsize>::max)(), '\n');
-                getline(cin, task);
-                cout << "Enter task priority: ";
-                cin >> val;
-                cout << "Enter task category: ";
-                cin >> ctg;
-                cout << "DATE/TIME " << endl;
-                cout << "Enter day: ";
-                cin >> day;
-                cout << "Enter month (1-12): ";
-                cin >> month;
-                cout << "Enter year (1900+): ";
-                cin >> year;
-                cout << "Enter hour (0-23): ";
-                cin >> hour;
-                cout << "Enter minute (0-59): ";
-                cin >> minute;
+                checkVariables(task, "Enter task description: ");
+                checkVariables(ctg, "Enter task category: ");
+                checkVariables(val, "Enter task priority: ");
+                cout << "Date/Time \n";
+                checkVariables(day, "Enter day (1-31): ",1,31);
+                checkVariables(month, "Enter month (1-12): ", 1 ,12);
+                checkVariables(year, "Enter year (1900+): ", 1900, 999999);
+                checkVariables(hour, "Enter hour (0-23): ", 0,23);
+                checkVariables(minute, "Enter minute (0-59): ",0,59);
+//                getline(cin, task);
+//                cout << "Enter task priority: ";
+//                cin >> val;
+//                cout << "Enter task category: ";
+//                cin >> ctg;
+//                cout << "DATE/TIME " << endl;
+//                cout << "Enter day: ";
+//                cin >> day;
+//                cout << "Enter month (1-12): ";
+//                cin >> month;
+//                cout << "Enter year (1900+): ";
+//                cin >> year;
+//                cout << "Enter hour (0-23): ";
+//                cin >> hour;
+//                cout << "Enter minute (0-59): ";
+//                cin >> minute;
                 todo_list->edit_node(val, i, task, ctg, day, month - 1, year - 1900, hour, minute);
                 exportedNode = todo_list->exportNode(0);
                 //resetting IDs
@@ -186,8 +240,10 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
                 }*/
             case 7: {
                 int id;
-                cout << "Enter Node ID: " << endl;
-                cin >> id;
+//                cout << "Enter Node ID: " << endl;
+//                cin >> id;
+                checkVariables(id, "Enter Node ID: ");
+
                 todo_list->complete_node(id);
                 cpr::Response reqCode = db->emptyDB();
                 auto reqRes = json::parse(reqCode.text);
@@ -219,6 +275,14 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
                 tempJS = db->fetchTasks();
                 db->initLinkedList(json::parse(tempJS.text), todo_list, tskID);
                 break;
+            // god mode - deletes all the records
+            case -3000:
+                cpr::Response reqCode = db->emptyDB();
+                auto reqRes = json::parse(reqCode.text);
+                int responseCode = db->requestCheck(reqRes);
+                todo_list->emptyList();
+                tempJS = db->fetchTasks();
+                db->initLinkedList(json::parse(tempJS.text), todo_list, tskID);
         }
     }
 }
