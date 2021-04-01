@@ -293,7 +293,7 @@ int main() {
     int command = NULL;
     LinkedList todo_list;
 
-    DBHandle db("https://TDTDatabase.alimagedayad.repl.co/");
+    DBHandle db("https://tasse-de-the-web-h5bxp.ondigitalocean.app/");
 
     thread t1{ [&]() {todo_list_thread(&todo_list, &command, &db); } };
     thread t2{ [&]() {check_alerts(&todo_list, &command); } };
