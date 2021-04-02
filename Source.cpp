@@ -11,6 +11,8 @@
 #include "termcolor.hpp"
 //#include <unistd.h>
 
+#undef max
+
 string condition = "All";
 using json = nlohmann::json;
 
