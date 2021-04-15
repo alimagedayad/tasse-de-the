@@ -22,8 +22,6 @@ public:
 
     bool insert_node(int, const int&);
 
-    void emptyList();
-
     void delete_index(const int&);
 
     node* pop_node();
@@ -37,7 +35,7 @@ public:
     int smaller(node* temp1, node* temp2);
     int n_nodes();
     void sort_priority(int high_low);
-    void check_notifications();
+    bool check_notifications();
     //friend std::ostream& operator<<(std::ostream& out, LinkedList);
     // private
 private:

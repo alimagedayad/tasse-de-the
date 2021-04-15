@@ -30,32 +30,38 @@ void node::set_timer(int year, int month, int day, int hour, int min)
     timer.tm_year = year;
 }
 
-void node::check_alarm()
+bool node::check_alarm()
 {
     time_t now;
     now = time(0);
-    if (difftime(now, mktime(&timer)) <= 10 && difftime(now, mktime(&timer)) >= -10 &&notification !=0 &&completed == false && timer.tm_year > 0)
+    if (difftime(now, mktime(&timer)) <= 10 && difftime(now, mktime(&timer)) >= -10 &&notification !=-1 &&completed == false && timer.tm_year > 0)
     {
-        notification = 0;
-        fort::char_table table;
-        table << fort::header;
-        table[0][0] = "ID";
-        table[0][1] = "Priority";
-        table[0][2] = "Category";
-        table[0][3] = "Description";
-        table[0][4] = "Date(d/m/y)";
-        table[0][5] = "Time(h:m)";
-        table << fort::endr;
-        string day, month, year, hour, minute;
-        day = to_string(this->timer.tm_mday);
-        month = to_string((this->timer.tm_mon) + 1);
-        year = to_string((this->timer.tm_year) + 1900);
-        hour = to_string(this->timer.tm_hour);
-        minute = to_string(this->timer.tm_min);
-        cout << termcolor::red << "This Task is Due now" << endl;
-        table << this->ID << this->number << this->category << this->task << day + "/" + month + '/' + year << hour + ':' + minute << fort::endr;
-        cout << termcolor::red << endl<< table.to_string() << endl;
-        cout << termcolor::reset;
 
+        notification--;
+        if (notification == -1)
+        {
+            fort::char_table table;
+            table << fort::header;
+            table[0][0] = "ID";
+            table[0][1] = "Priority";
+            table[0][2] = "Category";
+            table[0][3] = "Description";
+            table[0][4] = "Date(d/m/y)";
+            table[0][5] = "Time(h:m)";
+            table << fort::endr;
+            string day, month, year, hour, minute;
+            day = to_string(this->timer.tm_mday);
+            month = to_string((this->timer.tm_mon) + 1);
+            year = to_string((this->timer.tm_year) + 1900);
+            hour = to_string(this->timer.tm_hour);
+            minute = to_string(this->timer.tm_min);
+            cout << termcolor::red << "This Task is Due now" << endl;
+            table << this->ID << this->number << this->category << this->task << day + "/" + month + '/' + year << hour + ':' + minute << fort::endr;
+            cout << termcolor::red << endl << table.to_string() << endl;
+            cout << termcolor::reset;
+        }
+        
+        return true;
     }
+    return false;
 }

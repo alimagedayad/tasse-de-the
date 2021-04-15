@@ -18,6 +18,6 @@ public:
     int notification;
     bool completed;
     void set_timer(int year, int month, int day, int hour, int min);
-    void check_alarm();
+    bool check_alarm();
     //friend std::ostream& operator<<(std::ostream& out, node);
 };

@@ -47,8 +47,13 @@ void LinkedList::add_node(int num, int ID, std::string tsk, std::string ctg, int
 
 std::vector<std::vector<std::string>> LinkedList::exportNode(int index) {
     vector<vector<string>> exportedList;
+    if (!head) {
+        std::cout << "!head" << std::endl;
+        return exportedList;
+    }
     node* temp = find_index(index);
     while (temp != nullptr) {
+        std::cout << "while != nullptr \n id: " << temp->ID << std::endl;
         vector<string> vNode;
         vNode.push_back(to_string(temp->number));
         vNode.push_back(to_string(temp->ID));
@@ -62,13 +67,11 @@ std::vector<std::vector<std::string>> LinkedList::exportNode(int index) {
         vNode.push_back(to_string(0));
         vNode.push_back(to_string(temp->completed));
         exportedList.push_back(vNode);
+
         temp = temp->next;
     }
-
     return exportedList;
 }
-
-
 
 string LinkedList::display_list(int index, string condition) {
     if (!head) {
@@ -211,6 +214,7 @@ bool LinkedList::insert_node(int num, const int& index) {
     add_this->prev = temp;
     temp->next = add_this;
     return true;
+
 }
 
 void LinkedList::delete_ID(const int ID)
@@ -222,7 +226,6 @@ void LinkedList::delete_ID(const int ID)
             head = nullptr;
             return;
         }
-
         if (temp == head)
         {
             head->next->prev = nullptr;
@@ -230,12 +233,18 @@ void LinkedList::delete_ID(const int ID)
             delete(temp);
             return;
         }
-        if (temp != nullptr) {
+        if (temp != nullptr)
+        {
             temp->prev->next = temp->next;
             if (temp->next) {
                 temp->next->prev = temp->prev;
             }
-            delete (temp);
+            delete(temp);
+        }
+        if (n_nodes() == 1)
+        {
+            head = nullptr;
+            return;
         }
 }
 void LinkedList::delete_index(const int& index = NULL) {
@@ -265,20 +274,6 @@ node* LinkedList::pop_node() {
     tail = tail->prev;
     return pop;
 }
-
-void LinkedList::emptyList(){
-    node* curr;
-    node* prev;
-    curr = prev = head;
-    while(curr != nullptr){
-        prev = curr;
-        delete(prev);
-        curr = curr->next;
-    }
-    head = tail = nullptr;
-    delete(curr);
-}
-
 node* LinkedList::search_with_value(const int& val) {
     node* temp = head;
     while (temp)
@@ -416,7 +411,7 @@ int LinkedList::smaller(node* temp1, node* temp2)
     else return 0;
 }
 
-void LinkedList::check_notifications()
+bool LinkedList::check_notifications()
 {
 #ifdef __APPLE__
     usleep(1000);
@@ -426,12 +421,13 @@ void LinkedList::check_notifications()
 
     node* temp = head;
 
-    if (head == nullptr) return;
+    if (head == nullptr) return false;
     for (int i = 0; i < n_nodes(); i++)
     {
-        temp->check_alarm();
+        if (temp->check_alarm()) return true;
         temp = temp->next;
     }
+    return false;
 }
 
 void LinkedList::sort_time(int high_low) //bubble sort

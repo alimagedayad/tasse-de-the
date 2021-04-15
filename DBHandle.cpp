@@ -26,9 +26,6 @@ json DBHandle::constructJSON(std::vector<std::vector<std::string>> arr) {
             res[i]["taskChecked"] = arr[i][10];
         }
     }
-    else{
-        res = {};
-    }
     return res;
 }
 
