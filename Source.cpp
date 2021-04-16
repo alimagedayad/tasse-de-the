@@ -9,7 +9,6 @@
 #include <nlohmann/json.hpp>
 #include "fort.hpp"
 #include "termcolor.hpp"
-//#include <unistd.h>
 
 string condition = "All";
 using json = nlohmann::json;
@@ -31,7 +30,7 @@ void checkVariables(string& var, std::string message){
     while (cout << message && !(getline(cin, var))) {
         cin.clear(); //clear bad input flag
         cin.ignore(numeric_limits<streamsize>::max(), '\n'); //discard input
-        cout << "Invalid input; please re-enter.\n";
+        cout << "Invalid input; please re-enter. \n";
     }
 }
 
@@ -122,6 +121,7 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
 //                cin >> hour;
 //                cout << "Enter minute (0-59): ";
 //                cin >> minute;
+
                 taskArr.push_back(to_string(val));
                 taskArr.push_back(to_string(tskID));
                 taskArr.push_back(task);
@@ -294,6 +294,7 @@ int main() {
     LinkedList todo_list;
 
     DBHandle db("https://tasse-de-the-web-h5bxp.ondigitalocean.app/");
+//    DBHandle db("http://localhost:8080/");
 
     thread t1{ [&]() {todo_list_thread(&todo_list, &command, &db); } };
     thread t2{ [&]() {check_alerts(&todo_list, &command); } };
