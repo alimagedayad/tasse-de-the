@@ -308,7 +308,8 @@ URL: https://tasse-de-the-web-h5bxp.ondigitalocean.app/tasks/delete
 ***Status Code:*** 0
 
 <br>
-> Made with &#9829; by [thedevsaddam](https://github.com/thedevsaddam) | Generated at: 2021-04-16 03:03:23 by [docgen](https://github.com/thedevsaddam/docgen)
+
+Generated at: 2021-04-16 03:03:23 by [docgen](https://github.com/thedevsaddam/docgen)
 
 ---
 
