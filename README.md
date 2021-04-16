@@ -12,7 +12,7 @@
  </p>
  
 <p align="center">
-  Tasse de Tea (Cup of Tea) is a todo list with multiple interfaces (C++, JS and PWA).
+  Tasse de Thé (Cup of Tea) is a todo list with multiple interfaces (C++, JS and PWA).
 </p>
 
 
