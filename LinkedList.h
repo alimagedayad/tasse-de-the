@@ -10,15 +10,15 @@ public:
     LinkedList();
     //members
     // public
-    void add_node(int, int, std::string, std::string, int, int , int , int , int, bool = false);
+    void add_node(int, int, std::string, std::string, int, int, int, int, int, bool = false);
 
-    void edit_node(int, int, std::string, std::string, int , int, int, int , int);
+    void edit_node(int, int, std::string, std::string, int, int, int, int, int);
 
     void push_node(int, std::string);
 
     void complete_node(int);
 
-    string display_list(int,string);
+    string display_list(int, string);
 
     bool insert_node(int, const int&);
 

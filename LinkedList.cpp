@@ -26,7 +26,7 @@ void LinkedList::edit_node(int num, int ID, std::string tsk, std::string ctg, in
 
 void LinkedList::add_node(int num, int ID, std::string tsk, std::string ctg, int day, int month, int year, int hour, int minute, bool completed) {
     if (head == nullptr) {
-        head = new node(num,tsk,ctg, ID, completed);
+        head = new node(num, tsk, ctg, ID, completed);
         head = new node(num, tsk, ctg, ID, completed);
         head->set_timer(year, month, day, hour, minute);
         head->prev = head->next = nullptr;
@@ -215,28 +215,28 @@ bool LinkedList::insert_node(int num, const int& index) {
 
 void LinkedList::delete_ID(const int ID)
 {
-        node* temp = search_with_value(ID);
-        if (temp == nullptr) return;
-        if (n_nodes() == 1)
-        {
-            head = nullptr;
-            return;
-        }
+    node* temp = search_with_value(ID);
+    if (temp == nullptr) return;
+    if (n_nodes() == 1)
+    {
+        head = nullptr;
+        return;
+    }
 
-        if (temp == head)
-        {
-            head->next->prev = nullptr;
-            head = head->next;
-            delete(temp);
-            return;
+    if (temp == head)
+    {
+        head->next->prev = nullptr;
+        head = head->next;
+        delete(temp);
+        return;
+    }
+    if (temp != nullptr) {
+        temp->prev->next = temp->next;
+        if (temp->next) {
+            temp->next->prev = temp->prev;
         }
-        if (temp != nullptr) {
-            temp->prev->next = temp->next;
-            if (temp->next) {
-                temp->next->prev = temp->prev;
-            }
-            delete (temp);
-        }
+        delete (temp);
+    }
 }
 void LinkedList::delete_index(const int& index = NULL) {
     if (index == 0) {
@@ -266,11 +266,11 @@ node* LinkedList::pop_node() {
     return pop;
 }
 
-void LinkedList::emptyList(){
+void LinkedList::emptyList() {
     node* curr;
     node* prev;
     curr = prev = head;
-    while(curr != nullptr){
+    while (curr != nullptr) {
         prev = curr;
         delete(prev);
         curr = curr->next;
