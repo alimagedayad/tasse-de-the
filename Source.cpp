@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include <iostream>
 #include "LinkedList.h"
 #include "Node.h"
@@ -91,8 +92,7 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
         table = todo_list->display_list(0,condition);
         cout <<termcolor::green<< table << endl;
         cout <<termcolor::reset<< "Please choose an intruction from the following list: " << endl;
-        cout << "1-> Add a new task \n2-> Delete an existing task with ID \n3-> Edit a task\n4-> Sort list by priority (descending)\n5-> Sort list by priority (ascending)\n6-> Sort list by soonest task\n7-> Mark task as completed\n8-> Show all completed tasks\n9-> Show all incompleted tasks\n10-> Show tasks in specific category\n11-> Restore to default\n12-> Refresh\n-1->Terminate program" << endl;
-        cout << "Enter command: ";
+        cout << "1-> Add a new task \n2-> Delete an existing task with ID \n3-> Edit a task\n4-> Sort list by priority (descending)\n5-> Sort list by priority (ascending)\n6-> Sort list by soonest task\n7-> Mark task as completed\n8-> Show all completed tasks\n9-> Show all incompleted tasks\n10-> Show tasks in specific category\n11-> Restore to default\n12-> Add Subtask\n13-> Remove Subtask\n14-> Show Subtasks\n15-> Refresh\n-1->Terminate program" << endl;        cout << "Enter command: ";
         cin >> *command;
         switch (*command) {
             case 1: {
@@ -274,7 +274,33 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
             case 11:
                 condition = "All";
                 break;
-            case 12:
+            case 12: {
+                int taskID;
+                string subtask;
+                checkVariables(taskID, "Enter task ID: ");
+                cin.ignore((numeric_limits<streamsize>::max)(), '\n');
+                checkVariables(subtask, "Enter subtask: ");
+                todo_list->add_subtask(taskID, subtask);
+                break; }
+            case 13:{
+                int taskID, subtaskNum;
+                checkVariables(taskID, "Enter task ID: ");
+                checkVariables(subtaskNum, "Enter subtask number: ");
+                todo_list->remove_subtask(taskID, subtaskNum);
+                break; }
+            case 14:{
+                int taskID;
+                checkVariables(taskID, "Enter task ID: ");
+                string subList = todo_list->show_subtasks(taskID);
+                cout << termcolor::yellow << subList << endl;
+                #ifdef __APPLE__ \
+                    system( "read -n 1 -s -p \"Press any key to continue...\"" );
+                #elif _WIN32
+                    system("pause");
+                #endif
+                break;
+            }
+            case 15:
                 todo_list->emptyList();
                 cout << termcolor::green << "Loading..." << endl;
                 tempJS = db->fetchTasks();
