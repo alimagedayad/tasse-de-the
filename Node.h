@@ -3,6 +3,7 @@
 #include <string>
 #include <time.h>
 #include "fort.hpp"
+#include <vector>
 using namespace std;
 class node
 {
@@ -14,10 +15,12 @@ public:
     std::string task;
     std::string category;
     node* next = nullptr;
+    vector<string> subtasks;
     node* prev = nullptr;
     int notification;
+    bool has_subtasks();
     bool completed;
     void set_timer(int year, int month, int day, int hour, int min);
-    void check_alarm();
+    bool check_alarm();
     //friend std::ostream& operator<<(std::ostream& out, node);
 };

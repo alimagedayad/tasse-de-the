@@ -36,8 +36,11 @@ public:
     node* find_index(int i);
     int smaller(node* temp1, node* temp2);
     int n_nodes();
+    void add_subtask(int, string);
+    void remove_subtask(int, int);
+    std::string show_subtasks(int);
     void sort_priority(int high_low);
-    void check_notifications();
+    bool check_notifications();
     //friend std::ostream& operator<<(std::ostream& out, LinkedList);
     // private
 private:
