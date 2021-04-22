@@ -9,7 +9,7 @@
 #include <nlohmann/json.hpp>
 #include "fort.hpp"
 #include "termcolor.hpp"
-
+#include <unistd.h>
 string condition = "All";
 using json = nlohmann::json;
 
@@ -56,15 +56,20 @@ vector<vector<string>> taskReq;
 
 std::vector<std::vector<std::string>> exportedNode;
 
+#ifdef _WIN32
 void check_alerts(LinkedList * todo, int * command)
 {
     while (true)
     {
-        todo->check_notifications();
+        *time = *time + 1;
+        if (todo->check_notifications()) ShowWindow(GetConsoleWindow(), SW_RESTORE);
+        if (*time > *backround) ShowWindow(GetConsoleWindow(), SW_RESTORE);
         if (*command == -1)
             break;
     }
 }
+#endif
+
 
 void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
 {
@@ -297,10 +302,13 @@ int main() {
 //    DBHandle db("http://localhost:8080/");
 
     thread t1{ [&]() {todo_list_thread(&todo_list, &command, &db); } };
+    #ifdef _WIN32
     thread t2{ [&]() {check_alerts(&todo_list, &command); } };
+    #endif
     t1.join();
+    #ifdef _WIN32
     t2.join();
-
+    #endif
     cout << "Thank you!" << endl;
 }
 

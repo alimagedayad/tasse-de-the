@@ -26,7 +26,7 @@ void LinkedList::edit_node(int num, int ID, std::string tsk, std::string ctg, in
 
 void LinkedList::add_node(int num, int ID, std::string tsk, std::string ctg, int day, int month, int year, int hour, int minute, bool completed) {
     if (head == nullptr) {
-        head = new node(num,tsk,ctg, ID, completed);
+        head = new node(num, tsk, ctg, ID, completed);
         head = new node(num, tsk, ctg, ID, completed);
         head->set_timer(year, month, day, hour, minute);
         head->prev = head->next = nullptr;
@@ -211,6 +211,41 @@ bool LinkedList::insert_node(int num, const int& index) {
     add_this->prev = temp;
     temp->next = add_this;
     return true;
+}
+
+void LinkedList::add_subtask(int id, string task) {
+    if (head == nullptr) return;
+    node* parent = search_with_value(id);
+    if (!parent) return;
+    parent->subtasks.push_back(task); return;
+}
+
+void LinkedList::remove_subtask(int parent_id, int subtask_id) {
+    if (head == nullptr) return;
+    node* parent = search_with_value(parent_id);
+    if (!parent) return;
+    if (!parent->has_subtasks()) return;
+    if (parent->subtasks.size() < subtask_id) return;
+    parent->subtasks.erase(parent->subtasks.begin() + subtask_id);
+}
+
+
+string LinkedList::show_subtasks(int taskID) {
+    node* parent = search_with_value(taskID);
+    if (!parent) return "This Task does not Exist";
+    if (!parent->has_subtasks()) return "There are no subtasks for this task";
+    else{
+        fort::char_table table;
+        table << fort::header;
+        table[0][0] = "Subtask ID";
+        table[0][1] = "Subtask Description";
+        table << fort::endr;
+        for (auto i : parent->subtasks){
+            int count = 1;
+            table << count << i<<fort::endr;
+        }
+        return table.to_string();
+    }
 }
 
 void LinkedList::delete_ID(const int ID)
@@ -416,7 +451,7 @@ int LinkedList::smaller(node* temp1, node* temp2)
     else return 0;
 }
 
-void LinkedList::check_notifications()
+bool LinkedList::check_notifications()
 {
 #ifdef __APPLE__
     usleep(1000);
@@ -426,13 +461,15 @@ void LinkedList::check_notifications()
 
     node* temp = head;
 
-    if (head == nullptr) return;
+    if (head == nullptr) return false;
     for (int i = 0; i < n_nodes(); i++)
     {
-        temp->check_alarm();
+        if (temp->check_alarm()) return true;
         temp = temp->next;
     }
+    return false;
 }
+
 
 void LinkedList::sort_time(int high_low) //bubble sort
 {
