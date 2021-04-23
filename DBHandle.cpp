@@ -11,6 +11,7 @@ DBHandle::DBHandle(std::string u){
 
 json DBHandle::constructJSON(std::vector<std::vector<std::string>> arr) {
     json res;
+    json subTask;
     if (!arr.empty()) {
         for (int i = 0; i < arr.size(); i++) {
             res[i]["taskPriority"] = arr[i][0];
@@ -24,6 +25,7 @@ json DBHandle::constructJSON(std::vector<std::vector<std::string>> arr) {
             res[i]["taskMinute"] = arr[i][8];
             res[i]["taskSecond"] = arr[i][9];
             res[i]["taskChecked"] = arr[i][10];
+            res[i]["taskSubs"] = subTask.parse(arr[i][11]);
         }
     }
     else{
@@ -135,6 +137,8 @@ void DBHandle::printJSON(json x) {
 
 void DBHandle::initLinkedList(json DBData, LinkedList* list, int& count) {
     int temp = 0;
+    bool noSubs;
+    vector<string> subtasks;
     if(!DBData.empty()){
         std::cout << "Populating " << DBData.size() << " records from the database!" << std::endl;
         for(auto & i : DBData){
@@ -142,11 +146,32 @@ void DBHandle::initLinkedList(json DBData, LinkedList* list, int& count) {
                 temp = i["tID"].get<int>();
             }
 
+            if(i["taskSubs"].size() < 0){
+                noSubs = true;
+            }
+
+            else{
+                noSubs = false;
+            }
+
+
+
             list->add_node(i["priority"].get<int>(),
-                  i["tID"].get<int>(), i["task"].get<std::string>(),i["category"].get<std::string>(),
-                          i["taskDay"].get<int>(), ((i["taskMonth"].get<int>()) - 1), ((i["taskYear"].get<int>()) - 1900),
-                                  i["taskHour"].get<int>(), i["taskMinute"].get<int>(), i["taskChecked"].get<int>()
-                           );
+                  i["tID"].get<int>(),
+                  i["task"].get<std::string>(),
+                  i["category"].get<std::string>(),
+                  i["taskDay"].get<int>(), ((i["taskMonth"].get<int>()) - 1), ((i["taskYear"].get<int>()) - 1900),
+                  i["taskHour"].get<int>(),
+                  i["taskMinute"].get<int>(),
+                  i["taskChecked"].get<int>()
+            );
+
+            if(!noSubs){
+                int id = i["tID"];
+                for(auto & i: i["taskSubs"]){
+                    list->add_subtask(id, i);
+                }
+            }
 
 //                        list->add_node((int)i["priority"], (int)i["tID"], i["task"], i["category"], (int)i["taskDay"]
 //            , ((int)i["taskMonth"]) - 1, ((int)i["taskYear"] - 1900), (int)i["taskHour"], (int)i["taskMinute"]);
