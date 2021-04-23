@@ -90,8 +90,6 @@ std::vector<std::vector<std::string>> LinkedList::exportNode(int index) {
     return exportedList;
 }
 
-
-
 string LinkedList::display_list(int index, string condition) {
     if (!head) {
         return "The list is empty";
