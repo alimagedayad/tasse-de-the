@@ -1,6 +1,7 @@
 #include "LinkedList.h"
 #include <iomanip>
 #include "fort.hpp"
+#include <nlohmann/json.hpp>
 #include <vector>
 #ifdef _WIN32
 #include <Windows.h>
@@ -24,10 +25,27 @@ void LinkedList::edit_node(int num, int ID, std::string tsk, std::string ctg, in
     temp->set_timer(year, month, day, hour, minute);
 }
 
+string stringify(const vector<string>& v)
+{
+    stringstream ss;
+    ss << "{\"subtasks\":[\"";
+    for (size_t i = 0; i < v.size(); i++) {
+        if (i != 0) ss << "\"";
+        ss << v[i];
+        if (i < v.size() - 1){
+            ss << "\",";
+        }else{
+            ss << "\"";
+        }
+    }
+    ss << "]}";
+    return ss.str();
+}
+
 void LinkedList::add_node(int num, int ID, std::string tsk, std::string ctg, int day, int month, int year, int hour, int minute, bool completed) {
     if (head == nullptr) {
         head = new node(num, tsk, ctg, ID, completed);
-        head = new node(num, tsk, ctg, ID, completed);
+//        head = new node(num, tsk, ctg, ID, completed);
         head->set_timer(year, month, day, hour, minute);
         head->prev = head->next = nullptr;
         tail = head;
@@ -61,14 +79,16 @@ std::vector<std::vector<std::string>> LinkedList::exportNode(int index) {
         vNode.push_back(to_string(temp->timer.tm_min));
         vNode.push_back(to_string(0));
         vNode.push_back(to_string(temp->completed));
+        if(temp->subtasks.size() > 0){
+            vNode.push_back(stringify(temp->subtasks));
+        }else{
+            vNode.emplace_back("[]");
+        }
         exportedList.push_back(vNode);
         temp = temp->next;
     }
-
     return exportedList;
 }
-
-
 
 string LinkedList::display_list(int index, string condition) {
     if (!head) {

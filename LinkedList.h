@@ -41,6 +41,7 @@ public:
     std::string show_subtasks(int);
     void sort_priority(int high_low);
     bool check_notifications();
+    string vectorStringify(vector<string>);
     //friend std::ostream& operator<<(std::ostream& out, LinkedList);
     // private
 private:

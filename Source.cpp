@@ -138,6 +138,7 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
                 taskArr.push_back(to_string(minute));
                 taskArr.push_back(to_string(0));
                 taskArr.push_back(to_string(false));
+                taskArr.push_back("{}");
                 db->create2DVector(taskReq, &taskArr);
                 json req = db->constructJSON(taskReq);
                 cout << termcolor::green << "Loading..." << endl;
@@ -281,13 +282,36 @@ void todo_list_thread(LinkedList *todo_list, int* command, DBHandle *db)
                 cin.ignore((numeric_limits<streamsize>::max)(), '\n');
                 checkVariables(subtask, "Enter subtask: ");
                 todo_list->add_subtask(taskID, subtask);
-                break; }
+
+                cpr::Response reqCode = db->emptyDB();
+                auto reqRes = json::parse(reqCode.text);
+                int responseCode = db->requestCheck(reqRes);
+                exportedNode = todo_list->exportNode(0);
+                json dReq = db->constructJSON(exportedNode);
+
+                reqCode = db->insertTask(dReq);
+                reqRes = json::parse(reqCode.text);
+                responseCode = db->requestCheck(reqRes);
+
+
+                break;
+            }
             case 13:{
                 int taskID, subtaskNum;
                 checkVariables(taskID, "Enter task ID: ");
                 checkVariables(subtaskNum, "Enter subtask number: ");
                 todo_list->remove_subtask(taskID, subtaskNum);
-                break; }
+                cpr::Response reqCode = db->emptyDB();
+                auto reqRes = json::parse(reqCode.text);
+                int responseCode = db->requestCheck(reqRes);
+                exportedNode = todo_list->exportNode(0);
+                json dReq = db->constructJSON(exportedNode);
+
+                reqCode = db->insertTask(dReq);
+                reqRes = json::parse(reqCode.text);
+                responseCode = db->requestCheck(reqRes);
+                break;
+            }
             case 14:{
                 int taskID;
                 checkVariables(taskID, "Enter task ID: ");
